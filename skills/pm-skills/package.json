@@ -1,0 +1,32 @@
+{
+  "name": "pm-skills",
+  "version": "1.0.0",
+  "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到代码审查",
+  "author": "",
+  "license": "MIT",
+  "keywords": ["claude", "skills", "pm", "product-manager", "workflow"],
+  "skills": [
+    "./workflow/pm-workflow.md",
+    "./knowledge/pm-knowledge.md",
+    "./knowledge/pm-personalize.md",
+    "./design/brainstorming.md",
+    "./design/visual-companion.md",
+    "./product/write-prd.md",
+    "./implementation/review.md"
+  ],
+  "files": [
+    "workflow/**/*",
+    "knowledge/**/*",
+    "design/**/*",
+    "implementation/**/*",
+    "package.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "mineru-document-explorer": "^1.0.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
