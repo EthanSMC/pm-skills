@@ -11,19 +11,27 @@
 | `pm-workflow` | 主编排 skill，串联所有阶段 | `/pm-workflow [任务描述]` |
 | `pm-knowledge` | 知识引擎（摄入、检索、组织） | 知识摄入/查询时自动调用 |
 | `pm-personalize` | 从项目库提炼通用知识到个人库 | 手动调用或 ingest 后自动建议 |
+| `prd-reconcile` | 多文档合并与消歧 | 多份PRD/需求文档需合并时 |
 | `brainstorming` | 需求探索与设计 | 创建新功能/组件前 |
 | `write-prd` | PRD 撰写（增量，不重复 spec） | 设计文档通过后 |
+| `writing-plans` | 实施规划（bite-sized TDD任务分解） | 设计完成后、写代码前 |
+| `execute` | 代码实施（按计划执行） | 规划完成后 |
 | `review` | 代码审查 | 实施完成后 |
+| `verification-before-completion` | 验证先行（证据>声称） | 声称完成前 |
+| `finishing-a-development-branch` | 收尾分支（merge/PR/keep/discard） | 实施完成后 |
 
 ## 工作流
 
 ```
 阶段0: pm-knowledge    知识准备（检索已有知识）
+阶段0a: prd-reconcile  多文档合并与消歧（按需）
 阶段1: brainstorming   需求探索（基于知识基础）
 阶段2: write-prd       PRD 撰写（增量补充 spec）
-阶段3: 实施规划        任务分解、依赖排序
-阶段4: 代码实施        按计划执行，一个任务一个提交
-阶段5: 代码审查        质量验证、测试覆盖
+阶段3: writing-plans   实施规划（bite-sized TDD任务）
+阶段4: execute         代码实施（按计划执行）
+阶段5: review          代码审查
+阶段6: verification    验证先行（证据>声称）
+阶段7: finishing       收尾分支
 ```
 
 知识在整个流程中由各阶段各自负责回写：
@@ -36,6 +44,8 @@
                                                     write-prd → PRD → requirements/
                                                           ↓
                                               规划 → 实施 → review → synthesis/
+
+多份PRD → prd-reconcile → 冲突分析 → 决策 → 全局PRD → requirements/
 ```
 
 ## 知识库架构
@@ -43,7 +53,7 @@
 ### 双库分离
 
 ```
-个人知识库 %USERPROFILE%/.personal-wiki/  项目知识库 <project>/.project-wiki/
+个人知识库 ~/.pm-wiki/  项目知识库 <project>/.pm-wiki/
 维度：你这个人                   维度：这个项目
 跨项目积累，随你走               聚焦具体产品
 
@@ -126,7 +136,8 @@ skills/pm-skills/
 │   └── pm-workflow.md           # 主编排
 ├── knowledge/
 │   ├── pm-knowledge.md          # 知识引擎
-│   └── pm-personalize.md        # 个人知识提炼
+│   ├── pm-personalize.md        # 个人知识提炼
+│   └── prd-reconcile.md         # 多文档合并与消歧
 ├── design/
 │   ├── brainstorming.md         # 需求探索
 │   ├── visual-companion.md      # 可视化伴侣
@@ -139,7 +150,11 @@ skills/pm-skills/
 ├── product/
 │   └── write-prd.md             # PRD 撰写（增量）
 └── implementation/
-    ├── review.md                # 代码审查
+    ├── writing-plans.md              # 实施规划（bite-sized TDD任务）
+    ├── execute.md                    # 代码实施
+    ├── review.md                     # 代码审查
+    ├── verification-before-completion.md  # 验证先行
+    ├── finishing-a-development-branch.md  # 收尾分支
     └── spec-document-reviewer-prompt.md
 ```
 

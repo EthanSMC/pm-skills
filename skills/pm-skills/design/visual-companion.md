@@ -1,3 +1,8 @@
+---
+name: visual-companion
+description: "Browser-based visual brainstorming companion — 在脑暴过程中展示mockup、架构图、可视化选项。当问题涉及UI布局、架构图、视觉对比时使用浏览器展示，文字类问题仍用终端。"
+---
+
 # Visual Companion Guide
 
 Browser-based visual brainstorming companion for showing mockups, diagrams, and options.
@@ -37,15 +42,15 @@ The server watches a directory for HTML files and serves the newest one to the b
 scripts/start-server.sh --project-dir /path/to/project
 
 # Returns: {"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000/content",
-#           "state_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000/state"}
+#           "screen_dir":"/path/to/project/.pm-wiki/visual-companion/12345-1706000000/content",
+#           "state_dir":"/path/to/project/.pm-wiki/visual-companion/12345-1706000000/state"}
 ```
 
 Save `screen_dir` and `state_dir` from the response. Tell user to open the URL.
 
-**Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.superpowers/brainstorm/` for the session directory.
+**Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.pm-wiki/visual-companion/` for the session directory.
 
-**Note:** Pass the project root as `--project-dir` so mockups persist in `.superpowers/brainstorm/` and survive server restarts. Without it, files go to `/tmp` and get cleaned up. Remind the user to add `.superpowers/` to `.gitignore` if it's not already there.
+**Note:** Pass the project root as `--project-dir` so mockups persist in `.pm-wiki/visual-companion/` and survive server restarts. Without it, files go to `/tmp` and get cleaned up. Remind the user to add `.pm-wiki/` to `.gitignore` if it's not already there.
 
 **Launching the server by platform:**
 
@@ -279,7 +284,7 @@ If `$STATE_DIR/events` doesn't exist, the user didn't interact with the browser 
 scripts/stop-server.sh $SESSION_DIR
 ```
 
-If the session used `--project-dir`, mockup files persist in `.superpowers/brainstorm/` for later reference. Only `/tmp` sessions get deleted on stop.
+If the session used `--project-dir`, mockup files persist in `.pm-wiki/visual-companion/` for later reference. Only `/tmp` sessions get deleted on stop.
 
 ## Reference
 

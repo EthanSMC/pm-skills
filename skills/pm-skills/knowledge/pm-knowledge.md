@@ -69,7 +69,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":
 |--------|---------|
 | MCP 连接正常 | 通过 MCP 工具调用（推荐） |
 | MCP 不可用，CLI 可用 | Bash 调用 `qmd query`、`qmd wiki` 等命令 |
-| qmd 未安装 | 纯文件系统操作 — 直接读写 `.project-wiki/` markdown 文件 |
+| qmd 未安装 | 纯文件系统操作 — 直接读写 `.pm-wiki/` markdown 文件 |
 
 降级检测：在 skill 启动时执行 `qmd --version`，如果失败则标记为 "降级模式"，后续操作自动切换到文件系统方式。
 
@@ -78,7 +78,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":
 PM 知识分两层存储，维度不同、职责不同：
 
 ```
-个人知识库: %USERPROFILE%/.personal-wiki/ 维度：你这个人 — 跨项目积累，随你走
+个人知识库: ~/.pm-wiki/ 维度：你这个人 — 跨项目积累，随你走
   ├── skills/                     我掌握的技能、能力模型、成长记录
   ├── insights/                   行业洞察、产品思考、经验教训
   ├── industry/                   行业知识、市场数据、趋势报告
@@ -87,7 +87,7 @@ PM 知识分两层存储，维度不同、职责不同：
   ├── tools/                      工具使用心得、配置、对比
   └── reusable/                   可复用的知识片段（跨项目引用）
 
-项目知识库: <project>/.project-wiki/ 维度：这个项目 — 项目专属，聚焦具体产品
+项目知识库: <project>/.pm-wiki/ 维度：这个项目 — 项目专属，聚焦具体产品
   ├── context/                    项目背景、目标、愿景、干系人
   ├── requirements/               需求文档、用户故事、验收标准
   ├── constraints/                技术约束、业务约束、假设、依赖
@@ -132,8 +132,8 @@ PM 知识分两层存储，维度不同、职责不同：
 
 ```
 用户提问
-  → 1. 项目知识库 (<project>/.project-wiki/)  项目上下文最相关
-  → 2. 个人知识库 (%USERPROFILE%/.personal-wiki/) 个人积累兜底
+  → 1. 项目知识库 (<project>/.pm-wiki/)  项目上下文最相关
+  → 2. 个人知识库 (~/.pm-wiki/) 个人积累兜底
   → 3. 原始文档 Deep Read (回源)             回到源头
 ```
 
@@ -252,7 +252,7 @@ PM 知识分两层存储，维度不同、职责不同：
 6. 综合结果，附上来源引用返回
 
 #### 模式 C：纯文件系统（qmd 不可用时）
-1. 使用 Grep/Glob 工具在 `.project-wiki/` 目录中搜索
+1. 使用 Grep/Glob 工具在 `.pm-wiki/` 目录中搜索
 2. 直接读取相关 markdown 文件
 3. 按 frontmatter 的 tags、type 字段过滤
 
@@ -285,7 +285,7 @@ PM 知识分两层存储，维度不同、职责不同：
 4. 建议新的摄入方向（基于已有知识缺口）
 
 **文件系统降级（qmd 不可用时）：**
-1. 检查 `.project-wiki/` 下是否存在 `[待审]` 标记的页面
+1. 检查 `.pm-wiki/` 下是否存在 `[待审]` 标记的页面
 2. 列出没有 `---` frontmatter 的页面（格式不规范）
 3. 检查 `references/` 中的链接是否指向有效文件
 4. 报告超过 30 天未更新的页面
@@ -426,12 +426,16 @@ tags: [synthesis]
 
 | 阶段 | 写入路径 | 内容 |
 |------|---------|------|
+| prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
 | brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
+| writing-plans | `decisions/` + `constraints/` | 架构决策 + 新约束 |
 | 实施中 | `constraints/` | 新发现的约束/假设 |
 | review | `synthesis/` | 问题模式、成功经验 |
+| verification | `log.md` | 验证结果记录 |
+| finishing | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
 
-每次写入后，在 `.project-wiki/log.md` 中追加记录。
+每次写入后，在 `.pm-wiki/log.md` 中追加记录。
 
 ## 操作日志
 

@@ -11,11 +11,13 @@
 ## 工作流阶段
 
 ```
-阶段0: 知识准备     pm-knowledge
+阶段0: 知识准备     pm-knowledge / prd-reconcile
 阶段1: 需求探索     brainstorming
-阶段2: 实施规划     plan
+阶段2: 实施规划     writing-plans
 阶段3: 代码实施     execute
 阶段4: 代码审查     review
+阶段5: 验证先行     verification-before-completion
+阶段6: 收尾分支     finishing-a-development-branch
 ```
 
 ## 项目结构
@@ -24,20 +26,32 @@
 PM_skills/
 ├── .claude/
 │   ├── settings.json              # Claude Code 配置
-│   └── commands/                  # 本地 skills（可选）
+│   └── commands/
+│       └── pm-workflow.md         # /pm-workflow 命令入口
 ├── skills/
 │   └── pm-skills/                 # 核心 Plugin
 │       ├── package.json
 │       ├── README.md
-│       ├── skills/                # 所有 skill 定义
-│       │   ├── pm-workflow.md     # 主编排
+│       ├── workflow/
+│       │   └── pm-workflow.md     # 主编排
+│       ├── knowledge/
 │       │   ├── pm-knowledge.md    # 知识引擎
+│       │   ├── pm-personalize.md  # 个人知识提炼
+│       │   └── prd-reconcile.md   # 多文档合并与消歧
+│       ├── design/
 │       │   ├── brainstorming.md   # 需求探索
-│       │   ├── plan.md
-│       │   ├── execute.md
-│       │   └── review.md
-│       └── scripts/               # 可视化伴侣服务端
-├── .project-wiki/                 # 项目知识库（自动创建）
+│       │   ├── visual-companion.md # 可视化伴侣
+│       │   └── scripts/           # 可视化伴侣服务端
+│       ├── product/
+│       │   └── write-prd.md       # PRD 撰写
+│       └── implementation/
+│           ├── writing-plans.md              # 实施规划
+│           ├── execute.md                    # 代码实施
+│           ├── review.md                     # 代码审查
+│           ├── verification-before-completion.md  # 验证先行
+│           └── finishing-a-development-branch.md  # 收尾分支
+├── .pm-wiki/                 # 项目知识库（自动创建）
+├── raw/                     # 原始文档（待摄入）
 ├── CLAUDE.md
 └── README.md
 ```

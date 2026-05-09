@@ -9,10 +9,15 @@
     "./workflow/pm-workflow.md",
     "./knowledge/pm-knowledge.md",
     "./knowledge/pm-personalize.md",
+    "./knowledge/prd-reconcile.md",
     "./design/brainstorming.md",
     "./design/visual-companion.md",
     "./product/write-prd.md",
-    "./implementation/review.md"
+    "./implementation/writing-plans.md",
+    "./implementation/execute.md",
+    "./implementation/review.md",
+    "./implementation/verification-before-completion.md",
+    "./implementation/finishing-a-development-branch.md"
   ],
   "files": [
     "workflow/**/*",

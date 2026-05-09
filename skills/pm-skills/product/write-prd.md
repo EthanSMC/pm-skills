@@ -17,11 +17,11 @@ PRD **只写 spec 中没有的内容**，不重复已有信息。
 ## 前置条件
 
 - brainstorming skill 已完成，设计文档已通过用户审核
-- 设计文档位于 `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
+- 设计文档位于 `docs/pm/specs/YYYY-MM-DD-<topic>-design.md`
 
 ## 输出
 
-PRD 文档，保存到 `docs/superpowers/prds/YYYY-MM-DD-<topic>-prd.md`
+PRD 文档，保存到 `docs/pm/prds/YYYY-MM-DD-<topic>-prd.md`
 
 ## PRD 结构
 
@@ -34,7 +34,7 @@ PRD 文档，保存到 `docs/superpowers/prds/YYYY-MM-DD-<topic>-prd.md`
 | 作者 | |
 | 日期 | YYYY-MM-DD |
 | 状态 | 草稿 / 评审中 / 已批准 |
-| 关联设计 | `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` |
+| 关联设计 | `docs/pm/specs/YYYY-MM-DD-<topic>-design.md` |
 
 ## 1. 背景与目标
 
@@ -90,15 +90,15 @@ PRD 文档，保存到 `docs/superpowers/prds/YYYY-MM-DD-<topic>-prd.md`
 2. **提取增量要素** — 从设计中提取 PRD 独有的信息（需求、验收标准、优先级），背景/用户等已有信息只写一句话摘要
 3. **补充缺失信息** — 如果设计中缺少 PRD 需要的信息（如验收标准），向用户提问
 4. **撰写 PRD** — 按上述结构生成文档
-5. **保存** — 写入 `docs/superpowers/prds/YYYY-MM-DD-<topic>-prd.md`
+5. **保存** — 写入 `docs/pm/prds/YYYY-MM-DD-<topic>-prd.md`
 6. **用户审核** — 请用户评审 PRD，根据反馈修改
-7. **写入知识库** — 将 PRD 中的功能需求摘要写入 `.project-wiki/requirements/<主题>.md`
+7. **写入知识库** — 将 PRD 中的功能需求摘要写入 `.pm-wiki/requirements/<主题>.md`
 
 ## 与 pm-knowledge 的衔接
 
 PRD 审核通过后：
-- 将功能需求摘要（ID + 描述 + 优先级）写入 `.project-wiki/requirements/<主题>.md`
-- 在 `.project-wiki/log.md` 中记录 PRD 撰写摘要
+- 将功能需求摘要（ID + 描述 + 优先级）写入 `.pm-wiki/requirements/<主题>.md`
+- 在 `.pm-wiki/log.md` 中记录 PRD 撰写摘要
 
 ## 原则
 

@@ -19,7 +19,8 @@ PM_skills/
 │       │   └── pm-workflow.md
 │       ├── knowledge/         # 知识管理
 │       │   ├── pm-knowledge.md
-│       │   └── pm-personalize.md
+│       │   ├── pm-personalize.md
+│       │   └── prd-reconcile.md
 │       ├── product/           # PRD 撰写
 │       │   └── write-prd.md
 │       ├── design/            # 需求探索
@@ -27,9 +28,13 @@ PM_skills/
 │       │   ├── visual-companion.md
 │       │   └── scripts/       # 可视化伴侣服务端
 │       └── implementation/    # 代码实施
-│           ├── review.md                # 代码审查
+│           ├── writing-plans.md              # 实施规划（bite-sized TDD任务）
+│           ├── execute.md                    # 代码实施
+│           ├── review.md                     # 代码审查
+│           ├── verification-before-completion.md  # 验证先行
+│           ├── finishing-a-development-branch.md  # 收尾分支
 │           └── spec-document-reviewer-prompt.md
-├── .project-wiki/             # 项目知识库目录
+├── .pm-wiki/             # 项目知识库目录
 ├── raw/                     # 原始文档（待摄入）
 └── CLAUDE.md
 ```
@@ -41,9 +46,14 @@ PM_skills/
 | `/pm-workflow` | 显式调用 | 主编排，串联知识→脑暴→规划→实施→审查 |
 | `/pm-knowledge` | 显式调用或 workflow 自动调用 | 知识摄入、检索、组织 |
 | `/pm-personalize` | 显式调用或定时运行 | 从项目库提炼通用知识到个人库 |
+| `/prd-reconcile` | 显式调用 | 多份PRD/需求文档合并与消歧 |
 | `/brainstorming` | 显式调用或 workflow 自动调用 | 需求探索与设计 |
 | `/write-prd` | workflow 内部调用 | PRD 撰写（增量，不重复 spec） |
+| `/writing-plans` | workflow 内部调用 | 实施规划（bite-sized TDD任务分解） |
+| `/execute` | workflow 内部调用 | 代码实施（按计划执行） |
 | `/review` | workflow 内部调用 | 代码质量审查 |
+| `/verification-before-completion` | 声称完成前 | 验证先行（证据>声称） |
+| `/finishing-a-development-branch` | 实施完成后 | 收尾分支（merge/PR/keep/discard） |
 
 ## 如何使用
 

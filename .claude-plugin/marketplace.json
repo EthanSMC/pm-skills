@@ -1,0 +1,18 @@
+{
+  "name": "pm-skills-dev",
+  "description": "产品经理工作流 Skills Plugin marketplace",
+  "owner": {
+    "name": "shenmingchong"
+  },
+  "plugins": [
+    {
+      "name": "pm-skills",
+      "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到PRD撰写到代码审查",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "shenmingchong"
+      }
+    }
+  ]
+}

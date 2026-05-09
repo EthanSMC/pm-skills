@@ -43,7 +43,7 @@ description: "从项目知识库中提炼通用、可复用的知识到个人知
 
 ### Step 1: 扫描项目 wiki
 
-使用 Grep/Glob/Read 工具扫描项目 `.project-wiki/` 目录：
+使用 Grep/Glob/Read 工具扫描项目 `.pm-wiki/` 目录：
 
 1. 按修改时间排序，找出最近更新的页面（重点关注最近 7 天新增或大改的）
 2. 检查 `decisions/` — 是否有通用决策模式
@@ -63,7 +63,7 @@ description: "从项目知识库中提炼通用、可复用的知识到个人知
 
 对每个识别到的提炼项：
 
-1. 检查个人库 `%USERPROFILE%/.personal-wiki/` 是否已有类似主题
+1. 检查个人库 `~/.pm-wiki/` 是否已有类似主题
    - 已有 → 追加更新，标注更新来源
    - 无 → 创建新页面
 
@@ -83,7 +83,7 @@ tags: [提炼的标签]
 [提炼后的内容，已去除项目特异性引用]
 
 ## 来源
-- [项目知识库] <project>/.project-wiki/<分类>/<页面>.md
+- [项目知识库] <project>/.pm-wiki/<分类>/<页面>.md
 ```
 
 3. 在个人库的 `log.md` 中记录本次提炼
@@ -114,5 +114,5 @@ tags: [提炼的标签]
 ## 触发方式
 
 1. **手动触发** — 用户调用 `/pm-personalize` 或说"提炼个人知识"
-2. **定时触发** — 通过 schedule skill 设置每日/每周运行
+2. **定时触发** — 通过 Claude Code 的 CronCreate 工具设置每日/每周运行
 3. **主动触发** — 在 pm-knowledge 完成 ingest 后，如果发现新内容较多（超过 3 个页面更新），主动询问用户是否运行 pm-personalize
