@@ -96,7 +96,11 @@ PM 知识分两层存储，维度不同、职责不同：
   ├── (competitors/)              项目相关竞品分析（按需）
   ├── (users/)                    项目目标用户、画像、痛点（按需）
   ├── (synthesis/)                综合分析、机会点、风险评估（按需）
-  └── (references/)               → 链接到个人知识库（按需）
+  ├── (references/)               → 链接到个人知识库（按需）
+  ├── _working/                   L0: 工作记忆（当前会话临时草稿）
+  ├── _semantic/                  L2: 语义记忆（跨模式提炼的通用知识）
+  ├── _procedural/                L3: 程序记忆（内化的操作规程）
+  └── _generated/                 自动产出索引（勿手动编辑）
 
 原始文档: <project>/raw/  维度：待摄入的原始材料
 ```
@@ -290,6 +294,183 @@ PM 知识分两层存储，维度不同、职责不同：
 3. 检查 `references/` 中的链接是否指向有效文件
 4. 报告超过 30 天未更新的页面
 
+**PM 维度额外检查（工具脚本可用时）**：
+- `pm-wiki-lint.py confidence` — 重算置信度分数
+- `pm-wiki-lint.py supersession` — 检查矛盾对建议取代
+- `pm-wiki-lint.py stale` — 列出>90天未确认页面
+- `pm-wiki-lint.py orphans` — 列出无引用孤立页面
+- `pm-wiki-lint.py broken_refs` — 检查关系引用有效性
+
+## 4. Graph层 + Typed Relations
+
+### 4.1 Relations语法
+
+Relations 作为元数据放在 frontmatter（不在正文）。5种PM专用关系类型：
+
+| 类型 | 语义 | 方向 |
+|------|------|------|
+| `references` | 引用/参考 | 单向 |
+| `depends_on` | 依赖/前置 | 单向 |
+| `derived_from` | 推导来源 | 单向 |
+| `supersedes` | 取代 | 单向 |
+| `contradicts` | 矛盾 | 双向 |
+
+实体类型6种：`decision` / `concept` / `person` / `project` / `document` / `component`
+
+示例 frontmatter：
+```yaml
+---
+relations:
+  references: ["checkpoint-form-mapping"]
+  depends_on: ["prd-conflict-analysis"]
+  derived_from: ["运营管理平台-PRD.docx"]
+  supersedes: ["旧版状态体系"]
+  contradicts: []
+entities:
+  - {type: decision, name: "C12-节点挂起主任务不回退"}
+---
+```
+
+Wiki link不带 `.md` 扩展名，脚本自动匹配实际文件。
+
+### 4.2 目录新增
+
+- `_generated/` — 自动产出索引，勿手动编辑
+  - `entities.md` — pm-wiki-graph.py build 产出
+  - `relations.md` — pm-wiki-graph.py build 产出
+
+### 4.3 工具脚本：pm-wiki-graph.py
+
+| 命令 | 用途 | 调用方式 |
+|------|------|---------|
+| `build` | 解析所有页面frontmatter → 生成 `_generated/` 索引 | `python scripts/pm-wiki-graph.py --wiki .pm-wiki build` |
+| `traverse <entity>` | 从实体出发走图 → 返回关联页面 | `python scripts/pm-wiki-graph.py --wiki .pm-wiki traverse "C12决策"` |
+| `traverse <entity> --relation <type>` | 限定关系类型走图 | 加 `--relation references` |
+| `query <topic>` | build + traverse 扩展 | `python scripts/pm-wiki-graph.py --wiki .pm-wiki query "挂起规则"` |
+
+**降级**：脚本不可用时，Grep扫描 frontmatter 的 `relations:` 字段，手动构建关联。
+
+### 4.4 检索流程（更新Section 2）
+
+原流程：BM25 + vector → rerank → 返回
+
+新流程（三流RRF融合）：
+```
+用户提问
+  → Stream 1: qmd query (BM25 + vector + rerank) → 命中 S1
+  → Stream 2: pm-wiki-graph.py traverse → 从 S1 沿关系扩展 → 命中 S2
+  → RRF融合: score = 1/(k + rank_S1) + 1/(k + rank_S2), k=60
+  → 去重排序 → 返回（标注来源：BM25/Vector/Graph）
+```
+
+检索时 confidence < 0.3 的页面默认不返回。superseded 页面默认排除。
+
+**模式A增强（Graph层可用时）**：
+1. 先执行上述 qmd query 流程 → 得到候选页面 S1
+2. 执行 `python scripts/pm-wiki-graph.py --wiki .pm-wiki traverse <key_entity>` → 从 S1 沿关系扩展得到 S2
+3. RRF融合：`score = 1/(k + rank_S1) + 1/(k + rank_S2)`，k=60
+4. 去重排序返回，标注来源（BM25/Vector/Graph）
+
+## 5. 置信度与 Supersession
+
+### 5.1 Frontmatter新增字段
+
+```yaml
+confidence: 0.8          # 0-1，多源+近期=高，单一+久未验证=低
+superseded_by: null       # null=当前有效，有值=已被取代
+last_confirmed: 2026-05-07  # 最近确认日期
+```
+
+新字段可选。缺省时：confidence按单一来源(0.4)计算，superseded_by=null，last_confirmed=写入日期。
+
+### 5.2 置信度计算
+
+| 因素 | 影响 |
+|------|------|
+| 多源确认（每+1独立来源） | +0.2 |
+| 单一来源 | 基础 0.4 |
+| 30天内确认 | +0.2 |
+| 90天未确认 | -0.2 |
+| 有 contradicts 关系 | -0.3 |
+| 已被取代（superseded_by有值） | 置0 |
+
+范围 [0, 1]。confidence < 0.3 默认不返回。
+
+### 5.3 Supersession流程
+
+1. 新页面写入 → 检查 `contradicts` 关系
+2. 发现矛盾 → 提示用户："[[A]] 与 [[B]] 矛盾，是否确认 A取代B？"
+3. 用户确认 → 旧页面写入 `superseded_by: "A"`，confidence置0
+4. 旧页面顶部加：`> [已取代] 此页面已被 [[A]] 取代 (日期)`
+5. 旧页面保留不删除，检索时默认排除
+
+### 5.4 工具脚本：pm-wiki-lint.py
+
+| 命令 | 用途 | 调用方式 |
+|------|------|---------|
+| `confidence` | 重算置信度 → 更新frontmatter | `python scripts/pm-wiki-lint.py --wiki .pm-wiki confidence` |
+| `supersession` | 检查矛盾对 → 建议取代 | `python scripts/pm-wiki-lint.py --wiki .pm-wiki supersession` |
+| `stale` | 列出>90天未确认页面 | `python scripts/pm-wiki-lint.py --wiki .pm-wiki stale` |
+| `orphans` | 列出无引用的孤立页面 | `python scripts/pm-wiki-lint.py --wiki .pm-wiki orphans` |
+| `broken_refs` | 检查关系引用是否有效 | `python scripts/pm-wiki-lint.py --wiki .pm-wiki broken_refs` |
+
+**降级**：脚本不可用时，Grep扫描frontmatter手动检查。
+
+## 6. 分层记忆与 Crystallization
+
+### 6.1 四层架构
+
+```
+L0 _working/     — 工作记忆（当前会话临时草稿）
+L1 (已有目录)    — 插曲记忆（项目事实、决策、约束）
+L2 _semantic/    — 语义记忆（跨模式提炼的通用知识）
+L3 _procedural/  — 程序记忆（内化的操作规程）
+```
+
+### 6.2 升级路径
+
+| 触发条件 | 升级 | 执行 |
+|---------|------|------|
+| 会话结束 | L0→L1 | pm-wiki-crystallize.py session-end |
+| 同tags出现≥3次 | L1→L2 | pm-wiki-crystallize.py distill |
+| 模式多次成功应用 | L2→L3 | pm-wiki-crystallize.py codify |
+
+### 6.3 _working/生命周期
+
+- 会话开始：创建 `session-YYYY-MM-DD.md`
+- 会话中：追加临时笔记、未定结论
+- 会话结束：session-end → 写入L1 → 清理（保留最近1次）
+
+### 6.4 _semantic/ 和 _procedural/ 内容
+
+`_semantic/`: patterns.md / heuristics.md / anti-patterns.md / templates.md
+`_procedural/`: checklists.md / workflows.md / decision-frameworks.md
+
+### 6.5 工具脚本：pm-wiki-crystallize.py
+
+| 命令 | 用途 | 调用方式 |
+|------|------|---------|
+| `session-end` | _working/ → L1提取+清理 | `python scripts/pm-wiki-crystallize.py --wiki .pm-wiki session-end` |
+| `distill` | L1 → _semantic/ 蒸馏 | `python scripts/pm-wiki-crystallize.py --wiki .pm-wiki distill` |
+| `codify` | _semantic/ → _procedural/ 固化 | `python scripts/pm-wiki-crystallize.py --wiki .pm-wiki codify` |
+
+**降级**：脚本不可用时，手动读取 `_working/` → 提取 → 写入正式目录。
+
+## 7. Event-driven Hooks
+
+PM workflow执行时自动触发的6个钩子：
+
+| Hook | 触发时机 | 自动动作 | 实现 |
+|------|---------|---------|------|
+| `on_new_source` | 用户提供新文档 | ingest → extract entities → build graph → check contradictions → suggest supersession | pm-knowledge Ingest流程 |
+| `on_session_start` | brainstorming/writing-plans启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→brainstorming衔接（已有） |
+| `on_session_end` | 会话结束 | compress → _working/ → crystallize到L1 | pm-wiki-crystallize.py session-end |
+| `on_query` | 知识检索后 | 检查是否值得回写wiki | pm-knowledge Query流程 |
+| `on_memory_write` | 写入wiki页面时 | 检查contradicts → 建议supersession → 更新confidence | pm-wiki-lint.py supersession |
+| `on_schedule` | 定期 | confidence衰减 + stale标记 + distill | CronCreate |
+
+`on_schedule`频率建议：每周confidence衰减 + 每月distill。
+
 ## PM Wiki Schema
 
 每个 wiki 页面应包含以下 frontmatter：
@@ -298,13 +479,27 @@ PM 知识分两层存储，维度不同、职责不同：
 ---
 type: fact | analysis | recommendation | reference
 status: confirmed | pending-review | draft
+confidence: 0.8
+superseded_by: null
+last_confirmed: 2026-05-07
 source: <原始文档路径或链接>
 ingested: YYYY-MM-DD
 updated: YYYY-MM-DD
 project: <项目名 | personal>
 tags: [market, competitor, user-research, ...]
+entities:
+  - {type: decision, name: "C12-节点挂起主任务不回退"}
+  - {type: concept, name: "防呆确认"}
+relations:
+  references: ["checkpoint-form-mapping"]
+  depends_on: ["prd-conflict-analysis"]
+  derived_from: ["运营管理平台-PRD.docx"]
+  supersedes: ["旧版状态体系"]
+  contradicts: []
 ---
 ```
+
+新增字段（confidence/superseded_by/last_confirmed/entities/relations）为可选，缺省时按旧模式工作。
 
 ### 页面模板
 
