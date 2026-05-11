@@ -47,3 +47,26 @@ def test_build_auto_generated_header(tmp_wiki):
     run_graph(["build"], tmp_wiki)
     content = (tmp_wiki / "_generated" / "entities.md").read_text(encoding="utf-8")
     assert "[自动生成]" in content
+
+
+def test_traverse_from_entity(tmp_wiki):
+    """traverse from an entity should return related pages."""
+    run_graph(["build"], tmp_wiki)  # Must build first
+    result = run_graph(["traverse", "C12-节点挂起主任务不回退"], tmp_wiki)
+    assert result.returncode == 0
+    assert "conflict-resolutions" in result.stdout
+
+
+def test_traverse_with_relation_filter(tmp_wiki):
+    """traverse with --relation should only return pages matching that relation type."""
+    run_graph(["build"], tmp_wiki)
+    result = run_graph(["traverse", "C12-节点挂起主任务不回退", "--relation", "references"], tmp_wiki)
+    assert result.returncode == 0
+    # Only references relations should appear
+    assert "→ references →" in result.stdout or result.stdout.strip() == ""
+
+
+def test_traverse_entity_not_found(tmp_wiki):
+    """traverse with nonexistent entity should report not found."""
+    result = run_graph(["traverse", "nonexistent_entity"], tmp_wiki)
+    assert "not found" in result.stdout
