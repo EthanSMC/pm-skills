@@ -91,7 +91,7 @@ description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审
 | brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
 | writing-plans | `decisions/` + `constraints/` | 架构决策 + 新约束 |
-| 实施中 | `constraints/` | 新发现的约束/假设 |
+| 实施中 | `constraints/` + `_working/` | 新发现的约束/假设 + 临时笔记 |
 | review | `synthesis/` | 问题模式、成功经验 |
 | verification | `log.md` | 验证结果记录 |
 | finishing | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
@@ -127,7 +127,7 @@ description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审
 ```
 [文档/URL/文件] → pm-knowledge.ingest → wiki
                                             ↓
-用户提问 → pm-knowledge.query → 知识摘要 → brainstorming → 设计决策 → decisions/
+用户提问 → pm-knowledge.query → 三流检索(BM25+Vector+Graph) → 知识摘要 → brainstorming → 设计决策 → decisions/
                                                           ↓
                                                     write-prd → PRD → requirements/
                                                           ↓

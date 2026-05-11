@@ -24,6 +24,7 @@
     "knowledge/**/*",
     "design/**/*",
     "implementation/**/*",
+    "scripts/**/*",
     "package.json",
     "README.md"
   ],
