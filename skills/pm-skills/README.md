@@ -1,6 +1,6 @@
 # PM Skills Plugin
 
-产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到代码审查。
+产品经理工作流 Skills Plugin — 从知识摄入到需求分析到 PRD，可选原型验证。
 
 适用于 Claude Code / Claude Agent SDK。
 
@@ -14,11 +14,7 @@
 | `prd-reconcile` | 多文档合并与消歧 | 多份PRD/需求文档需合并时 |
 | `brainstorming` | 需求探索与设计 | 创建新功能/组件前 |
 | `write-prd` | PRD 撰写（增量，不重复 spec） | 设计文档通过后 |
-| `writing-plans` | 实施规划（bite-sized TDD任务分解） | 设计完成后、写代码前 |
-| `execute` | 代码实施（按计划执行） | 规划完成后 |
-| `review` | 代码审查 | 实施完成后 |
-| `verification-before-completion` | 验证先行（证据>声称） | 声称完成前 |
-| `finishing-a-development-branch` | 收尾分支（merge/PR/keep/discard） | 实施完成后 |
+| `prototyping` | 原型验证（技术规格+实施计划+骨架代码） | PRD 通过后用户选择进入 |
 
 ## 工作流
 
@@ -26,12 +22,9 @@
 阶段0: pm-knowledge    知识准备（检索已有知识）
 阶段0a: prd-reconcile  多文档合并与消歧（按需）
 阶段1: brainstorming   需求探索（基于知识基础）
-阶段2: write-prd       PRD 撰写（增量补充 spec）
-阶段3: writing-plans   实施规划（bite-sized TDD任务）
-阶段4: execute         代码实施（按计划执行）
-阶段5: review          代码审查
-阶段6: verification    验证先行（证据>声称）
-阶段7: finishing       收尾分支
+阶段2: write-prd       PRD 撰写（增量补充 spec） ← 默认终点
+阶段3: prototyping     原型验证（可选，用户选择后进入）
+  子阶段: 技术规格 → 实施计划 → 骨架构建 → 审查 → 验证 → 分支管理
 ```
 
 知识在整个流程中由各阶段各自负责回写：
@@ -43,7 +36,9 @@
                                                           ↓
                                                     write-prd → PRD → requirements/
                                                           ↓
-                                              规划 → 实施 → review → synthesis/
+                                                [用户选择: 是否原型验证?]
+                                                 ↓ (是)                ↓ (否)
+                                         prototyping → 原型产出       工作流结束
 
 多份PRD → prd-reconcile → 冲突分析 → 决策 → 全局PRD → requirements/
 ```
@@ -150,11 +145,7 @@ skills/pm-skills/
 ├── product/
 │   └── write-prd.md             # PRD 撰写（增量）
 └── implementation/
-    ├── writing-plans.md              # 实施规划（bite-sized TDD任务）
-    ├── execute.md                    # 代码实施
-    ├── review.md                     # 代码审查
-    ├── verification-before-completion.md  # 验证先行
-    ├── finishing-a-development-branch.md  # 收尾分支
+    ├── prototyping.md                # 原型验证（合并5个实施阶段）
     └── spec-document-reviewer-prompt.md
 ```
 

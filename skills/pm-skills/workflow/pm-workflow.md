@@ -1,11 +1,11 @@
 ---
 name: pm-workflow
-description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审查
+description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型验证
 ---
 
 # PM 工作流 Plugin
 
-组合 pm-knowledge + prd-reconcile + brainstorming + write-prd + writing-plans + execute + review + verification-before-completion + finishing-a-development-branch 的完整产品经理工作流。
+组合 pm-knowledge + prd-reconcile + brainstorming + write-prd 的产品经理工作流。PRD 完成后可选进入原型验证阶段 (prototyping)。
 
 ## 工作流步骤
 
@@ -42,44 +42,30 @@ description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审
 - 背景、用户、场景等已有信息用一句话引用 spec
 - **后置**：将功能需求摘要写入 `.pm-wiki/requirements/<主题>.md`
 
-### 阶段 3: 实施规划 (writing-plans)
+### 阶段 2 完成：PRD 交付
 
-调用 writing-plans skill 将设计拆解为bite-sized实施计划：
-- 读取设计文档和 PRD，识别实施单元
-- 每个单元2-5分钟，TDD步骤（写失败测试→运行→实现→验证→提交）
-- 无占位符规则——每步必须有完整代码和验证命令
-- 自审：spec覆盖→占位符扫描→类型一致性
-- 使用 TodoWrite 工具跟踪任务进度
+PRD 审核通过后，向用户提问：
 
-### 阶段 4: 代码实施 (execute)
+> "PRD 已完成并保存到 `docs/pm/prds/<filename>.md`。是否需要创建原型来验证设计方案？
+>
+> - **是** — 进入原型验证阶段 (prototyping)，产出技术规格、实施计划和骨架代码
+> - **否** — 工作流结束，PRD 即为最终交付物"
 
-按实施计划逐步执行：
-- 一个任务一个焦点，一个提交
-- 边写边测，保持简洁
-- 遵循项目现有模式和风格
-- 遇到问题时：计划有误→暂停讨论；新需求→记录不实施；技术阻碍→尝试替代方案
+等待用户明确回复。只有用户回复"是"时才进入阶段 3。
 
-### 阶段 5: 代码审查 (review)
+### 阶段 3: 原型验证 (prototyping) — 可选
 
-调用 review skill：
-- 对照设计文档检查一致性
-- 代码质量、安全性、测试覆盖
-- 输出审查报告，严重问题立即修复
+**仅在用户明确选择后进入此阶段。**
 
-### 阶段 6: 验证先行 (verification-before-completion)
+调用 prototyping skill，基于 PRD 创建原型：
+- 子阶段 3.1: 技术规格 — 从 PRD 衍生接口定义、数据模型、API 契约
+- 子阶段 3.2: 实施计划 — 创建 bite-sized TDD 任务规划（供未来完整实现使用）
+- 子阶段 3.3: 骨架构建 — 生成脚手架、空接口、mock 数据（可运行但不完整）
+- 子阶段 3.4: 审查 — 检查原型与 PRD 的一致性
+- 子阶段 3.5: 验证 — 证据先行，确认骨架可编译/运行/走通关键场景
+- 子阶段 3.6: 分支管理 — 提供 merge/PR/keep/discard 选项
 
-**在任何完成声明之前**：
-- 运行验证命令，读取输出
-- 证据先行，不信任口头声明
-- 不使用"应该"、"大概"、"看起来"
-- 逐条验证验收标准
-
-### 阶段 7: 收尾分支 (finishing-a-development-branch)
-
-验证通过后，引导工作收尾：
-- 确认测试全部通过
-- 提供4选项：本地合并 / 推送PR / 保持 / 丢弃
-- 执行选择并清理
+原型产出保存到 `docs/prototype/<feature>/`，包含 spec.md、plan.md、scaffold-index.md。
 
 ### 知识沉淀（各阶段各自负责）
 
@@ -90,11 +76,12 @@ description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审
 | prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
 | brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
-| writing-plans | `decisions/` + `constraints/` | 架构决策 + 新约束 |
-| 实施中 | `constraints/` + `_working/` | 新发现的约束/假设 + 临时笔记 |
-| review | `synthesis/` | 问题模式、成功经验 |
-| verification | `log.md` | 验证结果记录 |
-| finishing | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
+| prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |
+| prototyping (实施计划) | `decisions/` + `constraints/` | 计划中的决策 + 约束 |
+| prototyping (骨架构建) | `constraints/` + `_working/` | 新发现的约束/假设 + 临时笔记 |
+| prototyping (审查) | `synthesis/` | 问题模式、成功经验 |
+| prototyping (验证) | `log.md` | 验证结果记录 |
+| prototyping (分支管理) | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
 
 所有阶段完成后，在 `.pm-wiki/log.md` 中记录本次工作流摘要。
 
@@ -131,9 +118,9 @@ description: 完整的 PM 工作流 - 从知识摄入到需求分析到代码审
                                                           ↓
                                                     write-prd → PRD → requirements/
                                                           ↓
-                                              writing-plans → 实施计划 → execute → review → synthesis/
-                                                          ↓
-                                              verification → evidence-based completion → finishing
+                                                [用户选择: 是否原型验证?]
+                                                 ↓ (是)                ↓ (否)
+                                         prototyping → 原型产出       工作流结束
 
 多份PRD → prd-reconcile → 冲突分析 → 决策 → 全局PRD → requirements/
 ```

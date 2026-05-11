@@ -29,7 +29,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** - save to `docs/pm/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** - quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** - ask user to review the spec file before proceeding
-9. **Transition to implementation** - invoke writing-plans skill to create implementation plan
+9. **Transition to next phase** - the pm-workflow orchestrator will proceed to write-prd. No further skill invocation from brainstorming.
 
 ## Process Flow
 
@@ -45,7 +45,7 @@ digraph brainstorming {
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "Spec approved\n(end of brainstorming)" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -59,11 +59,11 @@ digraph brainstorming {
     "Write design doc" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Spec approved\n(end of brainstorming)" [label="approved"];
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is the approved spec document.** Do NOT invoke any other skill. The pm-workflow orchestrator handles the transition to write-prd.
 
 ## The Process
 
@@ -130,10 +130,10 @@ After the spec review loop passes, ask the user to review the written spec befor
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
-**Implementation:**
+**Next phase:**
 
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- The pm-workflow orchestrator will transition to write-prd after the spec is approved
+- Do NOT invoke any prototyping or implementation skill directly from brainstorming
 
 ## Key Principles
 

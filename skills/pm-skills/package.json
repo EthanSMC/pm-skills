@@ -1,7 +1,7 @@
 {
   "name": "pm-skills",
   "version": "1.0.0",
-  "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到代码审查",
+  "description": "产品经理工作流 Skills Plugin — 从知识摄入到需求分析到 PRD，可选原型验证",
   "author": "",
   "license": "MIT",
   "keywords": ["claude", "skills", "pm", "product-manager", "workflow"],
@@ -13,11 +13,7 @@
     "./design/brainstorming.md",
     "./design/visual-companion.md",
     "./product/write-prd.md",
-    "./implementation/writing-plans.md",
-    "./implementation/execute.md",
-    "./implementation/review.md",
-    "./implementation/verification-before-completion.md",
-    "./implementation/finishing-a-development-branch.md"
+    "./implementation/prototyping.md"
   ],
   "files": [
     "workflow/**/*",

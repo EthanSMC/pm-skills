@@ -463,7 +463,7 @@ PM workflow执行时自动触发的6个钩子：
 | Hook | 触发时机 | 自动动作 | 实现 |
 |------|---------|---------|------|
 | `on_new_source` | 用户提供新文档 | ingest → extract entities → build graph → check contradictions → suggest supersession | pm-knowledge Ingest流程 |
-| `on_session_start` | brainstorming/writing-plans启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→brainstorming衔接（已有） |
+| `on_session_start` | brainstorming/prototyping启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→brainstorming衔接（已有） |
 | `on_session_end` | 会话结束 | compress → _working/ → crystallize到L1 | pm-wiki-crystallize.py session-end |
 | `on_query` | 知识检索后 | 检查是否值得回写wiki | pm-knowledge Query流程 |
 | `on_memory_write` | 写入wiki页面时 | 检查contradicts → 建议supersession → 更新confidence | pm-wiki-lint.py supersession |
@@ -624,11 +624,12 @@ tags: [synthesis]
 | prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
 | brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
-| writing-plans | `decisions/` + `constraints/` | 架构决策 + 新约束 |
-| 实施中 | `constraints/` | 新发现的约束/假设 |
-| review | `synthesis/` | 问题模式、成功经验 |
-| verification | `log.md` | 验证结果记录 |
-| finishing | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
+| prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |
+| prototyping (实施计划) | `decisions/` + `constraints/` | 计划中的决策 + 约束 |
+| prototyping (骨架构建) | `constraints/` + `_working/` | 新发现的约束/假设 + 临时笔记 |
+| prototyping (审查) | `synthesis/` | 问题模式、成功经验 |
+| prototyping (验证) | `log.md` | 验证结果记录 |
+| prototyping (分支管理) | `log.md` + `synthesis/` | 工作流摘要 + 成功经验 |
 
 每次写入后，在 `.pm-wiki/log.md` 中追加记录。
 
