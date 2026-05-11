@@ -1,3 +1,122 @@
+<!--
+# Agent Reference
+
+PM Skills 插件的机器可读配置参考。供 AI agent 快速理解插件结构、skill 触发条件、工作流编排、知识库 schema。
+
+## Plugin Manifest
+
+- name: pm-skills
+- version: 1.0.0
+- type: skills plugin (Claude Code Skills Plugin format)
+- skills count: 8
+- required dependency: mineru-document-explorer >= 1.0.9 (optional, 降级为文件系统检索)
+
+## Skill Registry
+
+| skill | path | trigger | role |
+|-------|------|---------|------|
+| pm-workflow | workflow/pm-workflow.md | `/pm-workflow [描述]` | orchestrator，串联所有阶段 |
+| pm-knowledge | knowledge/pm-knowledge.md | 知识摄入/查询时自动调用 | 知识引擎（ingest/query/lint） |
+| pm-personalize | knowledge/pm-personalize.md | ingest 后自动建议或手动调用 | 从项目库提炼通用知识到个人库 |
+| prd-reconcile | knowledge/prd-reconcile.md | 多份 PRD/需求文档需合并时 | 多文档合并与消歧 |
+| brainstorming | design/brainstorming.md | `/brainstorming [主题]` 或新功能探索 | 需求探索与设计 |
+| visual-companion | design/visual-companion.md | brainstorming 中视觉问题 | 浏览器端可视化辅助 |
+| write-prd | product/write-prd.md | `/write-prd` 或 spec 通过后 | PRD 撰写（增量） |
+| prototyping | implementation/prototyping.md | `/prototyping` 或 PRD 后用户选择 | 原型验证（6 子阶段） |
+
+## Workflow DAG
+
+```
+pm-workflow orchestrates:
+  Phase 0:  pm-knowledge.query → 知识摘要
+  Phase 0a: prd-reconcile (conditional, 多文档时)
+  Phase 1:  brainstorming ← 知识摘要注入
+  Phase 2:  write-prd ← spec (增量，不重复已有内容)
+  Phase 2 end: branch → ask user "原型验证?"
+    yes → Phase 3: prototyping (6 sub-phases)
+    no  → workflow ends, PRD is deliverable
+```
+
+Skill 间衔接：
+- brainstorming 终态 = spec approved, pm-workflow handles transition to write-prd
+- write-prd 终态 = PRD delivered, pm-workflow handles branch question
+- prototyping 终态 = scaffold verified, pm-workflow handles branch management
+- 各 skill 不直接 invoke 其他 skill，全部由 pm-workflow 编排
+
+## Knowledge Schema
+
+### 双库结构
+
+个人库 `~/.pm-wiki/`: skills/ insights/ industry/ templates/ methods/ tools/ reusable/
+项目库 `<project>/.pm-wiki/`: context/ raw/ competitors/ users/ requirements/ constraints/ decisions/ synthesis/ references/
+
+扩展层（wiki retrieval upgrade）:
+- `_working/` L0 临时笔记
+- `_semantic/` L2 语义聚合页
+- `_procedural/` L3 可执行程序页
+- `_generated/` graph/lint/crystallize 产出
+
+### Query Priority
+
+项目库 → 个人库 → 原始文档 Deep Read
+
+### Page Frontmatter Schema
+
+```yaml
+type: fact | analysis | recommendation | reference
+status: confirmed | pending-review | draft
+source: <原始文档路径>
+ingested: YYYY-MM-DD
+updated: YYYY-MM-DD
+project: <项目名 | personal>
+tags: [list]
+# wiki retrieval upgrade 新增字段
+confidence: 0.0-1.0          # 6-factor 置信度评分
+superseded_by: <page> | null  # 被哪页取代
+last_confirmed: YYYY-MM-DD    # 最后确认日期
+entities: [list]               # 本页提及的实体
+relations:                     # 本页声明的 PM 关系
+  - target: <page>
+    type: references | depends_on | derived_from | supersedes | contradicts
+```
+
+###审核分流
+
+fact → auto-write, analysis/recommendation → draft + `[待审]` tag, await user confirm
+
+## Output Paths
+
+| stage | path | content |
+|-------|------|---------|
+| brainstorming | `docs/pm/specs/YYYY-MM-DD-<topic>-design.md` | 设计规格 |
+| write-prd | `docs/pm/prds/<filename>.md` | PRD |
+| prototyping | `docs/prototype/<feature>/` | spec.md + plan.md + scaffold-index.md + 源码 |
+| knowledge | `.pm-wiki/` | wiki pages |
+
+## Python Scripts
+
+| script | commands | purpose |
+|--------|----------|---------|
+| pm-wiki-graph.py | build / traverse / query | 构建知识图谱、遍历关系、查询实体 |
+| pm-wiki-lint.py | confidence / supersession / stale / orphans / broken_refs | 置信度评分、取代检测、过期/孤儿/断链检查 |
+| pm-wiki-crystallize.py | session-end / distill / codify | 知识结晶：提取工作笔记、聚类语义、固化程序 |
+
+依赖: `pip install pyyaml pytest` (requirements.txt 已包含)
+
+## MCP Dependency
+
+```json
+{
+  "mcpServers": {
+    "qmd": { "command": "qmd", "args": ["mcp"] }
+  }
+}
+```
+
+MCP 不可用时降级为 `qmd` CLI (Bash 调用) 或纯文件系统检索。
+
+-->
+
 # PM Skills
 
 > 你不需要懂编程、不需要懂 AI。只要能跟着一步步操作，就能用。
