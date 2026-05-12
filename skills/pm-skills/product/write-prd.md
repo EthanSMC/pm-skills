@@ -1,11 +1,11 @@
 ---
 name: write-prd
-description: "根据 brainstorming 产出的设计文档，撰写正式的产品需求文档（PRD）。将设计意图转化为可评审的需求规格。"
+description: "根据 pm-brainstorming 产出的设计文档，撰写正式的产品需求文档（PRD）。将设计意图转化为可评审的需求规格。"
 ---
 
 # Write a PRD
 
-将 brainstorming 阶段产出的设计文档转化为正式的产品需求文档（PRD）。
+将 pm-brainstorming 阶段产出的设计文档转化为正式的产品需求文档（PRD）。
 
 ## 核心原则
 
@@ -16,7 +16,7 @@ PRD **只写 spec 中没有的内容**，不重复已有信息。
 
 ## 前置条件
 
-- brainstorming skill 已完成，设计文档已通过用户审核
+- pm-brainstorming skill 已完成，设计文档已通过用户审核
 - 设计文档位于 `docs/pm/specs/YYYY-MM-DD-<topic>-design.md`
 
 ## 输出
@@ -102,7 +102,7 @@ PRD 审核通过后：
 
 ## 原则
 
-- **忠于设计** — PRD 不能偏离 brainstorming 已确认的设计意图
+- **忠于设计** — PRD 不能偏离 pm-brainstorming 已确认的设计意图
 - **增量不重复** — spec 已有的内容只引用，不复制
 - **验收标准必须可测试** — 每条 FR 需求必须有明确的验收标准
 - **优先级驱动** — 用 P0/P1/P2 标注优先级，帮助实施阶段排期

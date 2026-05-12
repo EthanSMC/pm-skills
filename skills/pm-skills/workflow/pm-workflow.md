@@ -5,7 +5,7 @@ description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型
 
 # PM 工作流 Plugin
 
-组合 pm-knowledge + prd-reconcile + brainstorming + write-prd 的产品经理工作流。PRD 完成后可选进入原型验证阶段 (prototyping)。
+组合 pm-knowledge + prd-reconcile + pm-brainstorming + write-prd 的产品经理工作流。PRD 完成后可选进入原型验证阶段 (prototyping)。
 
 ## 工作流步骤
 
@@ -21,13 +21,13 @@ description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型
 - 检索项目知识库和全局知识库中的相关知识
 - 识别知识缺口
 - 如有新文档需要摄入，执行 ingest 流程
-- 输出知识摘要，作为 brainstorming 的输入
+- 输出知识摘要，作为 pm-brainstorming 的输入
 
 **特殊情况**：如果用户有多份PRD/需求文档需要合并，调用 prd-reconcile skill 执行冲突分析和合并。
 
-### 阶段 1: 需求探索 (brainstorming)
+### 阶段 1: 需求探索 (pm-brainstorming)
 
-调用 brainstorming skill 进行需求分析和探索：
+调用 pm-brainstorming skill 进行需求分析和探索：
 - **前置**：接收 pm-knowledge 输出的知识摘要
 - 理解用户意图，收集功能需求，探索设计选项
 - **后置**：
@@ -37,7 +37,7 @@ description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型
 ### 阶段 2: 撰写 PRD (write-prd)
 
 调用 write-prd skill 将设计转化为产品需求文档：
-- **前置**：brainstorming 设计文档已通过审核（位于 `docs/pm/specs/`）
+- **前置**：pm-brainstorming 设计文档已通过审核（位于 `docs/pm/specs/`）
 - PRD 只写 spec 中**没有**的内容：功能需求表、验收标准、优先级、非功能需求
 - 背景、用户、场景等已有信息用一句话引用 spec
 - **后置**：将功能需求摘要写入 `.pm-wiki/requirements/<主题>.md`
@@ -74,7 +74,7 @@ PRD 审核通过后，向用户提问：
 | 阶段 | 写入路径 | 内容 |
 |------|---------|------|
 | prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
-| brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
+| pm-brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
 | prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |
 | prototyping (实施计划) | `decisions/` + `constraints/` | 计划中的决策 + 约束 |
@@ -114,7 +114,7 @@ PRD 审核通过后，向用户提问：
 ```
 [文档/URL/文件] → pm-knowledge.ingest → wiki
                                             ↓
-用户提问 → pm-knowledge.query → 三流检索(BM25+Vector+Graph) → 知识摘要 → brainstorming → 设计决策 → decisions/
+用户提问 → pm-knowledge.query → 三流检索(BM25+Vector+Graph) → 知识摘要 → pm-brainstorming → 设计决策 → decisions/
                                                           ↓
                                                     write-prd → PRD → requirements/
                                                           ↓

@@ -1,11 +1,11 @@
 ---
 name: pm-knowledge
-description: "PM 知识管理模块 — 摄入、组织、检索产品相关知识，为需求分析和 brainstorming 提供知识基础。基于 MinerU Document Explorer (qmd)，支持 MCP/CLI/文件系统三级降级。"
+description: "PM 知识管理模块 — 摄入、组织、检索产品相关知识，为需求分析和 pm-brainstorming 提供知识基础。基于 MinerU Document Explorer (qmd)，支持 MCP/CLI/文件系统三级降级。"
 ---
 
 # PM Knowledge — 产品经理知识引擎
 
-为 PM 工作流提供知识基础设施。负责摄入各种格式的文档，按 PM 维度组织知识、支持语义检索和 wiki 维护，为 brainstorming 和需求分析提供知识支撑。
+为 PM 工作流提供知识基础设施。负责摄入各种格式的文档，按 PM 维度组织知识、支持语义检索和 wiki 维护，为 pm-brainstorming 和需求分析提供知识支撑。
 
 ## 前置依赖
 
@@ -233,7 +233,7 @@ PM 知识分两层存储，维度不同、职责不同：
 
 **触发时机：**
 - 用户直接提问
-- brainstorming skill 开始前自动调用（见衔接逻辑）
+- pm-brainstorming skill 开始前自动调用（见衔接逻辑）
 
 **检索流程：**
 
@@ -463,7 +463,7 @@ PM workflow执行时自动触发的6个钩子：
 | Hook | 触发时机 | 自动动作 | 实现 |
 |------|---------|---------|------|
 | `on_new_source` | 用户提供新文档 | ingest → extract entities → build graph → check contradictions → suggest supersession | pm-knowledge Ingest流程 |
-| `on_session_start` | brainstorming/prototyping启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→brainstorming衔接（已有） |
+| `on_session_start` | pm-brainstorming/prototyping启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→pm-brainstorming衔接（已有） |
 | `on_session_end` | 会话结束 | compress → _working/ → crystallize到L1 | pm-wiki-crystallize.py session-end |
 | `on_query` | 知识检索后 | 检查是否值得回写wiki | pm-knowledge Query流程 |
 | `on_memory_write` | 写入wiki页面时 | 检查contradicts → 建议supersession → 更新confidence | pm-wiki-lint.py supersession |
@@ -589,14 +589,14 @@ tags: [synthesis]
 
 ### 知识注入（Brainstorming 前置）
 
-当 brainstorming skill 启动时，自动执行以下步骤：
+当 pm-brainstorming skill 启动时，自动执行以下步骤：
 
 1. **识别主题** — 从用户的任务描述中提取关键概念
 2. **知识检索** — 按 Query 流程检索项目库 + 全局库中的相关知识
-3. **知识摘要** — 将检索结果整理为摘要，注入到 brainstorming 的上下文中
+3. **知识摘要** — 将检索结果整理为摘要，注入到 pm-brainstorming 的上下文中
 4. **标注来源** — 明确标注哪些是已有知识，哪些是需要探索的新领域
 
-输出格式（注入到 brainstorming 上下文）：
+输出格式（注入到 pm-brainstorming 上下文）：
 ```
 ## 已有知识基础
 
@@ -622,7 +622,7 @@ tags: [synthesis]
 | 阶段 | 写入路径 | 内容 |
 |------|---------|------|
 | prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
-| brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
+| pm-brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
 | prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |
 | prototyping (实施计划) | `decisions/` + `constraints/` | 计划中的决策 + 约束 |
