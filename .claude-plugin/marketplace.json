@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "pm-skills",
-      "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到PRD撰写到代码审查",
-      "version": "1.0.0",
+      "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求探索到 PRD 撰写，可选原型验证",
+      "version": "1.2.0",
       "source": "./",
       "author": {
         "name": "shenmingchong"

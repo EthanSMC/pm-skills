@@ -1,7 +1,7 @@
 {
   "name": "pm-skills",
-  "version": "1.0.0",
-  "description": "产品经理工作流 Skills Plugin — 从知识摄入到需求分析到 PRD，可选原型验证。基于 MinerU 文档引擎，支持双库知识架构。",
+  "version": "1.2.0",
+  "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求探索到 PRD 撰写，可选原型验证",
   "author": {
     "name": "shenmingchong"
   },

@@ -1,5 +1,7 @@
 .pm-wiki/
+.claude/settings.json
 .claude/settings.local.json
+.claude/commands/
 node_modules/
 *.tmp
 __pycache__/
