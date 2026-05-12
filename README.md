@@ -1,45 +1,31 @@
 <!--
 # Agent Setup Guide
 
-## 快速安装
+## 安装方式
 
-如果用户的项目还没有配置 pm-skills，执行以下步骤：
+将 skills 目录复制到用户项目的 `.claude/skills/` 下：
 
-1. 找到项目根目录下的 `.claude/settings.json`（不存在则创建）
-2. 根据安装方式写入 skills source：
-
-npm 安装：
-```json
-{
-  "skills": {
-    "sources": [
-      { "type": "npm", "package": "pm-skills" }
-    ]
-  }
-}
+```
+<project>/.claude/skills/
+  pm-workflow/SKILL.md
+  pm-knowledge/SKILL.md          + scripts/
+  pm-personalize/SKILL.md
+  prd-reconcile/SKILL.md
+  pm-brainstorming/SKILL.md
+  visual-companion/SKILL.md      + scripts/
+  write-prd/SKILL.md
+  prototyping/SKILL.md           + spec-document-reviewer-prompt.md
 ```
 
-本地安装（将 path 替换为实际路径）：
-```json
-{
-  "skills": {
-    "sources": [
-      { "type": "local", "path": "/absolute/path/to/pm-skills/skills/pm-skills" }
-    ]
-  }
-}
-```
-
-3. 验证：重启 Claude Code 后，输入 `/pm-workflow` 应能触发 skill
+Claude Code 自动发现 `.claude/skills/<name>/SKILL.md`，无需额外配置。
+重启 Claude Code 后输入 `/` 可验证 skill 是否加载。
 
 ## 可选：MCP 配置
 
-知识引擎依赖 MinerU Document Explorer (qmd) 进行文档解析和检索。
-在同一 `settings.json` 中追加：
+知识引擎增强依赖 MinerU Document Explorer (qmd)。在 `.claude/settings.json` 中追加：
 
 ```json
 {
-  "skills": { ... },
   "mcpServers": {
     "qmd": { "command": "qmd", "args": ["mcp"] }
   }
@@ -50,33 +36,31 @@ npm 安装：
 
 ## 可选：Python 工具脚本
 
-知识图谱/置信度/结晶 三个脚本位于 `scripts/`，需 Python 依赖：
+pm-knowledge 自带 scripts/，需 Python 依赖：
 
 ```bash
 pip install pyyaml pytest
 ```
 
 脚本命令：
-- `python scripts/pm-wiki-graph.py build` — 构建 `.pm-wiki/` 知识图谱
-- `python scripts/pm-wiki-lint.py confidence` — 计算页面置信度评分
-- `python scripts/pm-wiki-crystallize.py session-end` — 从工作笔记提取知识页
+- `python .claude/skills/pm-knowledge/scripts/pm-wiki-graph.py build` — 构建 `.pm-wiki/` 知识图谱
+- `python .claude/skills/pm-knowledge/scripts/pm-wiki-lint.py confidence` — 计算页面置信度评分
+- `python .claude/skills/pm-knowledge/scripts/pm-wiki-crystallize.py session-end` — 从工作笔记提取知识页
 
 ## Skill 触发词
 
-用户说以下内容时，调用对应 skill：
-
 | 用户意图 | skill | 调用方式 |
 |---------|-------|---------|
-| "帮我做产品流程" / "我要设计xxx" / `/pm-workflow` | pm-workflow | `Skill("pm-workflow")` |
-| "整理这些需求" / "讨论一下xxx设计" / `/pm-brainstorming` | pm-brainstorming | `Skill("pm-brainstorming")` |
-| "写PRD" / `/write-prd` | write-prd | `Skill("write-prd")` |
-| "合并这几份PRD" / `/prd-reconcile` | prd-reconcile | `Skill("prd-reconcile")` |
-| "做个原型验证" / `/prototyping` | prototyping | `Skill("prototyping")` |
+| "帮我做产品流程" / "我要设计xxx" | pm-workflow | `Skill("pm-workflow")` |
+| "整理需求" / "讨论一下xxx设计" | pm-brainstorming | `Skill("pm-brainstorming")` |
+| "写PRD" | write-prd | `Skill("write-prd")` |
+| "合并这几份PRD" | prd-reconcile | `Skill("prd-reconcile")` |
+| "做个原型验证" | prototyping | `Skill("prototyping")` |
 | "摄入这个文档" / `/pm-knowledge ingest <path>` | pm-knowledge | `Skill("pm-knowledge")` |
 
-## 工作流编排规则
+## 工作流编排
 
-pm-workflow 是唯一编排器。各 skill 不互相 invoke，由 pm-workflow 控制流转：
+pm-workflow 是唯一编排器，各 skill 不互相 invoke：
 
 ```
 Phase 0:  pm-knowledge.query → 知识摘要注入 Phase 1
@@ -89,12 +73,10 @@ Phase 3:  prototyping（仅用户明确选择后）
 
 ## 产出路径
 
-各阶段写入位置：
-
 - pm-brainstorming → `docs/pm/specs/YYYY-MM-DD-<topic>-design.md`
 - write-prd → `docs/pm/prds/<filename>.md`
 - prototyping → `docs/prototype/<feature>/` (spec.md, plan.md, scaffold-index.md)
-- knowledge → `.pm-wiki/` 各子目录
+- pm-knowledge → `.pm-wiki/` 各子目录
 
 知识库目录自动创建，无需手动建。
 -->
@@ -147,51 +129,39 @@ npm install -g @anthropic-ai/claude-code
 
 ### 第 3 步：装 PM Skills
 
-**npm 安装：**
-
-```
-npm install -g pm-skills
-```
-
-**本地安装（如果 npm 上没有）：**
-
 1. 打开 https://github.com/EthanSMC/pm-skills
 2. 点击绿色 **Code** 按钮 → **Download ZIP**
-3. 解压，放到你喜欢的地方
-4. 终端进入文件夹：`cd 你放pm-skills的路径`
-5. 装依赖：`npm install`
+3. 解压到你喜欢的地方
+4. 把 `skills/pm-skills/` 下的所有文件夹复制到你的项目里：
 
-### 第 4 步：连接到 Claude Code
-
-在你的项目文件夹里创建 `.claude/settings.json`：
-
-npm 安装的写法：
-```json
-{
-  "skills": {
-    "sources": [
-      { "type": "npm", "package": "pm-skills" }
-    ]
-  }
-}
+```
+你的项目/.claude/skills/
+  pm-workflow/SKILL.md
+  pm-knowledge/SKILL.md
+  pm-personalize/SKILL.md
+  prd-reconcile/SKILL.md
+  pm-brainstorming/SKILL.md
+  visual-companion/SKILL.md
+  write-prd/SKILL.md
+  prototyping/SKILL.md
 ```
 
-本地安装的写法：
-```json
-{
-  "skills": {
-    "sources": [
-      { "type": "local", "path": "你解压的路径/skills/pm-skills" }
-    ]
-  }
-}
+> 每个 skill 是一个文件夹，里面有一个 `SKILL.md`。`pm-knowledge` 和 `visual-companion` 还有各自的 `scripts/` 子目录，一起复制过去就行。
+
+5. 重启 Claude Code，输入 `/` 应能看到这些 skill
+
+### 第 4 步：验证
+
+进入你的项目文件夹，启动 Claude Code：
+
 ```
+cd 你的项目路径
+claude
+```
+
+输入 `/`，看到 pm-workflow、pm-brainstorming 等 skill 名字就说明装好了。
 
 ## 开始使用
-
-1. 终端进入项目文件夹：`cd 你的项目路径`
-2. 启动：`claude`
-3. 输入命令：
 
 | 你想做什么 | 输入什么 |
 |-----------|---------|
@@ -230,11 +200,11 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 
 ## 常见问题
 
-**"command not found"** → 检查 Node.js 和 Claude Code 是否装好，终端里 `node --version` 和 `claude --version` 能运行吗？
+**"command not found"** → 检查 Node.js 和 Claude Code 是否装好
 
 **Claude Code 无响应** → 网络问题，需联网访问 Anthropic 服务
 
-**PM Skills 命令不生效** → 检查 `.claude/settings.json` 是否在项目文件夹里、路径是否正确
+**Skill 命令不生效** → 检查 `.claude/skills/` 下是否有 `SKILL.md` 文件，文件夹名是否正确
 
 **合并多份 PRD** → `/prd-reconcile`
 
@@ -256,6 +226,7 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 | `pm-personalize` | 从项目库提炼通用知识到个人库 | 手动调用或 ingest 后自动建议 |
 | `prd-reconcile` | 多文档合并与消歧 | 多份PRD/需求文档需合并时 |
 | `pm-brainstorming` | 需求探索与设计 | 创建新功能/组件前 |
+| `visual-companion` | 浏览器端可视化辅助 | brainstorming 中视觉问题 |
 | `write-prd` | PRD 撰写（增量，不重复 spec） | 设计文档通过后 |
 | `prototyping` | 原型验证（技术规格+实施计划+骨架代码） | PRD 通过后用户选择进入 |
 
@@ -330,32 +301,26 @@ pip install pymupdf python-docx python-pptx
 
 ```
 skills/pm-skills/
-├── package.json
-├── README.md
-├── workflow/
-│   └── pm-workflow.md
-├── knowledge/
-│   ├── pm-knowledge.md
-│   ├── pm-personalize.md
-│   └── prd-reconcile.md
-├── design/
-│   ├── pm-brainstorming.md
-│   ├── visual-companion.md
-│   └── scripts/
-├── product/
-│   └── write-prd.md
-├── implementation/
-│   ├── prototyping.md
-│   └── spec-document-reviewer-prompt.md
-└── scripts/
-    ├── pm-wiki-graph.py
-    ├── pm-wiki-lint.py
-    ├── pm-wiki-crystallize.py
-    ├── conftest.py
-    ├── requirements.txt
-    ├── test_graph.py
-    ├── test_lint.py
-    └── test_crystallize.py
+  pm-workflow/SKILL.md
+  pm-knowledge/
+    SKILL.md
+    scripts/
+      pm-wiki-graph.py
+      pm-wiki-lint.py
+      pm-wiki-crystallize.py
+      conftest.py
+      requirements.txt
+      test_*.py
+  pm-personalize/SKILL.md
+  prd-reconcile/SKILL.md
+  pm-brainstorming/SKILL.md
+  visual-companion/
+    SKILL.md
+    scripts/
+  write-prd/SKILL.md
+  prototyping/
+    SKILL.md
+    spec-document-reviewer-prompt.md
 ```
 
 </details>
