@@ -1,7 +1,7 @@
 {
   "name": "pm-skills",
   "version": "1.0.0",
-  "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求分析到PRD撰写到代码审查。基于 MinerU 文档引擎，支持双库知识架构。",
+  "description": "产品经理工作流 Skills Plugin — 从知识摄入到需求分析到 PRD，可选原型验证。基于 MinerU 文档引擎，支持双库知识架构。",
   "author": {
     "name": "shenmingchong"
   },
@@ -21,8 +21,8 @@
   "skills": "./skills/pm-skills/",
   "interface": {
     "displayName": "PM Skills",
-    "shortDescription": "产品经理完整工作流：知识引擎→脑暴→PRD→规划→实施→审查→验证→收尾",
-    "longDescription": "PM Skills provides a complete product manager workflow: knowledge ingestion via MinerU/qmd, brainstorming design, PRD writing, implementation planning with bite-sized TDD tasks, execution, code review, evidence-based verification, and branch finishing. Includes prd-reconcile for merging multiple PRD documents and resolving cross-document conflicts.",
+    "shortDescription": "产品经理工作流：知识引擎→脑暴→PRD→可选原型验证",
+    "longDescription": "PM Skills provides a product manager workflow: knowledge ingestion via MinerU/qmd, brainstorming design, PRD writing. Optionally enters prototyping (tech spec + implementation plan + scaffold code) when user chooses. Includes prd-reconcile for merging multiple PRD documents.",
     "developerName": "shenmingchong",
     "category": "Product",
     "capabilities": [
