@@ -46,6 +46,19 @@ npm install -g @anthropic-ai/claude-code
 
 ### 第 3 步：装 PM Skills
 
+**方式 A：Marketplace 安装（推荐）**
+
+Claude Code 已装好的用户，两条命令即可：
+
+```bash
+claude plugin marketplace add https://github.com/EthanSMC/pm-skills
+claude plugin install pm-skills
+```
+
+重启 Claude Code，输入 `/` 应能看到这些 skill。
+
+**方式 B：手动复制**
+
 1. 打开 https://github.com/EthanSMC/pm-skills
 2. 点击绿色 **Code** 按钮 → **Download ZIP**
 3. 解压到你喜欢的地方
