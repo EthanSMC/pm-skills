@@ -90,7 +90,12 @@ cp pm-skills/skills/pm-skills/prototyping/SKILL.md      你的项目/.gemini/ski
 
 ### Kimi Code
 
-请查阅 Kimi Code 官方文档确认其 skills 目录路径和格式要求，然后参照上述其他 agent 的方式安装。
+Kimi Code 直接兼容 `.claude/skills/` 目录（优先级：`.kimi/skills/` > `.claude/skills/` > `.codex/skills/`），安装方式和 Claude Code 手动复制相同：
+
+```bash
+git clone https://github.com/EthanSMC/pm-skills.git
+cp -r pm-skills/skills/pm-skills/*  你的项目/.claude/skills/
+```
 
 ### 其他 Agent
 
