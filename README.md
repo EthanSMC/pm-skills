@@ -306,11 +306,11 @@ skills/pm-skills/
 
 ## Acknowledgments
 
-- [rohitg00](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2) — skill 设计思路参考
-- [karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — Claude Code 使用实践启发
+- [rohitg00](https://gist.github.com/rohitg00/2067ab416f7bbe447c1977edaaa681e2) — 记忆生命周期机制
+- [karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — 知识库管理
 - [MinerU Document Explorer](https://github.com/opendatalab/MinerU) — 知识引擎的文档解析与检索底层
 - [Superpowers](https://github.com/anthropics/claude-plugins-official) — Claude Code plugin 架构参考与实施类 skill 补充
-- [Rykii](https://github.com/Rykii) — 使用 wiki 做项目知识管理的核心 idea
+- [Rykii](https://github.com/Rykii) — 使用 wiki 做项目知识管理的idea
 
 ## License
 
