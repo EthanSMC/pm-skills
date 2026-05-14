@@ -102,7 +102,7 @@ PM 知识分两层存储，维度不同、职责不同：
   ├── _procedural/                L3: 程序记忆（内化的操作规程）
   └── _generated/                 自动产出索引（勿手动编辑）
 
-原始文档: <project>/raw/  维度：待摄入的原始材料
+原始文档: <project>/raw/  维度：知识摄入队列（进入即摄入，不是归档）
 ```
 
 ### 两库的关系
@@ -141,6 +141,72 @@ PM 知识分两层存储，维度不同、职责不同：
   → 3. 原始文档 Deep Read (回源)             回到源头
 ```
 
+## Raw 管理 — 源文件组织与追踪
+
+`raw/` 目录是知识摄入的**暂存队列**，不是归档仓库。每个进入 `raw/` 的文件都必须被摄入。
+
+### 0.1 Raw Discovery — 散落文件识别
+
+当用户有散落在项目各处的文件时，帮助识别哪些应该进入 `raw/`：
+
+**扫描范围**：
+- 项目根目录及一级子目录中的文档文件（.pdf, .docx, .pptx, .md）
+- 排除明显非 PM 相关的文件（代码文件、配置文件、.git/、node_modules/ 等）
+
+**识别流程**：
+1. 扫描项目目录，列出所有潜在的源文件
+2. 排除已在 `raw/`、`.pm-wiki/`、`docs/pm/` 等目录中的文件
+3. 对每个候选文件给出简短说明（文件名、大小、类型）
+4. 向用户呈现候选列表，让用户确认哪些需要进入 `raw/`
+5. 用户确认后，将文件复制到 `raw/`（保留原位置，不移动）
+
+**排除规则**（自动跳过，不呈现给用户）：
+
+| 模式 | 原因 |
+|------|------|
+| `*.js`, `*.ts`, `*.py`, `*.go` 等 | 代码文件，非 PM 知识 |
+| `*.json`, `*.yaml`, `*.toml` | 配置文件 |
+| `.git/`, `node_modules/`, `.claude/` | 工具/依赖目录 |
+| `README.md`, `CLAUDE.md` | 项目元文件，已有独立用途 |
+| `*.log`, `*.tmp` | 临时文件 |
+
+### 0.2 Raw Manifest — 变化检测
+
+使用 `.pm-wiki/_generated/raw-manifest.md` 追踪 `raw/` 中每个文件的摄入状态：
+
+```markdown
+## Raw Manifest
+
+| 文件 | 状态 | 摄入时间 | 文件修改时间 | docid |
+|------|------|---------|------------|-------|
+| 竞品分析报告.pdf | ingested | 2026-05-07 | 2026-05-06 | #abc123 |
+| 用户调研Q1.docx | ingested | 2026-05-07 | 2026-05-05 | #def456 |
+| 新需求文档.md | pending | - | 2026-05-14 | - |
+```
+
+**变化检测逻辑**（每次 pm-workflow 启动时执行）：
+1. 读取 raw-manifest.md，获取已摄入文件列表
+2. 扫描当前 `raw/` 目录，获取实际文件列表
+3. 对比两者：
+   - manifest 中不存在 → **新文件**，标记为 `pending`
+   - manifest 中文件修改时间与实际不同 → **文件有变化**，标记为 `changed`
+   - manifest 中 `pending` → **尚未摄入**，需要处理
+4. 如有 pending/changed 文件，自动触发 ingest 流程
+
+### 0.3 自动创建 raw/
+
+每次 pm-workflow 启动时：
+- 检查 `<project>/raw/` 是否存在，不存在则自动创建
+- 检查 `.pm-wiki/_generated/raw-manifest.md` 是否存在，不存在则自动创建
+- 执行变化检测，发现 pending/changed 文件时自动触发 ingest
+
+### 0.4 设计原则
+
+- **进入即摄入** — 每个进入 `raw/` 的文件都必须走 ingest 流程
+- **溯源不删** — 摄入完成后，文件保留在 `raw/` 作为溯源依据，manifest 标记为 `ingested`
+- **变化重摄入** — 源文件有更新时（修改时间变化），自动重新摄入
+- **不在 raw 就不摄入** — 只有 `raw/` 中的文件才会被摄入，散落文件需先经 Raw Discovery 识别
+
 ## 三大操作
 
 ### 1. Ingest — 知识摄入
@@ -149,12 +215,12 @@ PM 知识分两层存储，维度不同、职责不同：
 
 **支持格式：** Markdown (.md), PDF (.pdf), Word (.docx), PowerPoint (.pptx)
 
-#### Step 0: 保存原始文档
+#### Step 0: 确认文档在 raw/ 中
 
-所有待摄入的文档先保存到 `<project>/raw/` 目录：
-- 保留原始文件名
+所有待摄入的文档必须在 `<project>/raw/` 目录中（见 Raw 管理）：
+- 如文档不在 `raw/` 中，先通过 Raw Discovery 流程让用户确认后复制进来
 - 文件路径用于 `wiki_ingest` 的 source 参数
-- 摄入完成后，raw 目录的文档作为溯源依据保留
+- 摄入完成后更新 raw-manifest.md，文件保留在 `raw/` 作为溯源依据
 
 #### Step 1: 确定目标库
 - 项目特异性内容（竞品对比、目标用户、需求）→ 项目知识库
@@ -228,6 +294,13 @@ PM 知识分两层存储，维度不同、职责不同：
 **CLI 模式：** `qmd wiki lint`
 
 检查孤儿页面、过时页面、待审状态。
+
+#### Step 7: 更新 Raw Manifest
+
+摄入完成后，更新 `.pm-wiki/_generated/raw-manifest.md`：
+- 将文件状态从 `pending`/`changed` 更新为 `ingested`
+- 记录摄入时间、docid、文件修改时间
+- 下次 pm-workflow 启动时，manifest 与实际 `raw/` 对比即可发现变化
 
 ### 2. Query — 知识检索
 
@@ -338,6 +411,7 @@ Wiki link不带 `.md` 扩展名，脚本自动匹配实际文件。
 - `_generated/` — 自动产出索引，勿手动编辑
   - `entities.md` — pm-wiki-graph.py build 产出
   - `relations.md` — pm-wiki-graph.py build 产出
+  - `raw-manifest.md` — raw/ 文件摄入状态追踪（pm-knowledge 维护）
 
 ### 4.3 工具脚本：pm-wiki-graph.py
 
@@ -664,3 +738,4 @@ tags: [synthesis]
 - **知识提炼** — 当一次 ingest 后新增或修改超过 3 个页面时，主动建议用户调用 `/pm-personalize` 提炼通用知识到个人库
 - **不重复造轮子** — 所有文档解析、检索、wiki 维护的底层工作委托给 MinerU (qmd)
 - **三级降级** — MCP → CLI → 文件系统，任一层级可用即可工作
+- **raw 是队列不是仓库** — 进入 raw/ 的文件必须被摄入，摄入后保留但标记已处理；每次工作流启动检查 raw/ 变化

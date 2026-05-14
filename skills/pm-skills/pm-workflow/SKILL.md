@@ -17,10 +17,21 @@ description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型
 - 执行 `qmd --version` 验证工具可用性
 - 如不可用，降级为文件系统检索模式
 
+**Raw 目录检查**（每次启动必执行）：
+- 检查 `<project>/raw/` 是否存在，不存在则自动创建
+- 检查 `.pm-wiki/_generated/raw-manifest.md` 是否存在，不存在则自动创建
+- 执行变化检测：对比 manifest 与实际 `raw/` 目录
+  - 发现 pending/changed 文件 → 自动触发 ingest
+  - 无变化 → 跳过，继续常规流程
+
+**散落文件识别**（当项目中有不在 `raw/` 中的文档文件时）：
+- 执行 Raw Discovery 扫描项目目录
+- 向用户呈现候选文件列表，让用户确认哪些需要进入 `raw/`
+- 确认后复制到 `raw/`，标记为 `pending`，触发 ingest
+
 **常规流程**：
 - 检索项目知识库和全局知识库中的相关知识
 - 识别知识缺口
-- 如有新文档需要摄入，执行 ingest 流程
 - 输出知识摘要，作为 pm-brainstorming 的输入
 
 **特殊情况**：如果用户有多份PRD/需求文档需要合并，调用 prd-reconcile skill 执行冲突分析和合并。
@@ -58,12 +69,13 @@ PRD 审核通过后，向用户提问：
 **仅在用户明确选择后进入此阶段。**
 
 调用 prototyping skill，基于 PRD 创建原型：
-- 子阶段 3.1: 技术规格 — 从 PRD 衍生接口定义、数据模型、API 契约
-- 子阶段 3.2: 实施计划 — 创建 bite-sized TDD 任务规划（供未来完整实现使用）
-- 子阶段 3.3: 骨架构建 — 生成脚手架、空接口、mock 数据（可运行但不完整）
-- 子阶段 3.4: 审查 — 检查原型与 PRD 的一致性
-- 子阶段 3.5: 验证 — 证据先行，确认骨架可编译/运行/走通关键场景
-- 子阶段 3.6: 分支管理 — 提供 merge/PR/keep/discard 选项
+- 子阶段 3.1: 技术规格 — 从 PRD 衍生接口定义、数据模型、API 契约（内联）
+- 子阶段 3.1.5: 前端设计 — REQUIRED SUB-SKILL（可选）: `pm-frontend-design`（仅前端原型时）
+- 子阶段 3.2: 实施计划 — REQUIRED SUB-SKILL: `pm-writing-plans`（内部引用 `pm-tdd`）
+- 子阶段 3.3: 骨架构建 — REQUIRED SUB-SKILL: `pm-executing-plans`
+- 子阶段 3.4: 审查 — 检查原型与 PRD 的一致性（内联，强制审查循环）
+- 子阶段 3.5: 验证 — REQUIRED SUB-SKILL: `pm-verification`（Iron Law + 5步门控）
+- 子阶段 3.6: 分支管理 — REQUIRED SUB-SKILL: `pm-branch-management`（完整操作手册）
 
 原型产出保存到 `docs/prototype/<feature>/`，包含 spec.md、plan.md、scaffold-index.md。
 
@@ -73,10 +85,11 @@ PRD 审核通过后，向用户提问：
 
 | 阶段 | 写入路径 | 内容 |
 |------|---------|------|
-| prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
+| prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 + 完整度报告 |
 | pm-brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
 | prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |
+| prototyping (前端设计) | `decisions/` + `constraints/` + `_working/` | UI 设计决策 + 交互约束 + 设计资源 |
 | prototyping (实施计划) | `decisions/` + `constraints/` | 计划中的决策 + 约束 |
 | prototyping (骨架构建) | `constraints/` + `_working/` | 新发现的约束/假设 + 临时笔记 |
 | prototyping (审查) | `synthesis/` | 问题模式、成功经验 |
@@ -94,7 +107,7 @@ PRD 审核通过后，向用户提问：
 - `requirements/` — 需求文档、用户故事
 - `constraints/` — 技术/业务约束、假设
 - `decisions/` — 产品决策记录
-- `raw/` — 原始文档（PDF/DOCX/PPTX/MD）
+- `raw/` — 知识摄入队列（进入即摄入，参见 pm-knowledge Raw 管理）
 
 **按需创建**（相关场景触发时创建）：
 - `market/` — 市场/行业数据（用户提到市场分析时）

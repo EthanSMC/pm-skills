@@ -21,10 +21,19 @@ PM_skills/
 │   │   ├── SKILL.md             # 浏览器可视化辅助
 │   │   └── scripts/             # 可视化伴侣服务端
 │   ├── write-prd/SKILL.md       # PRD 撰写
-│   └── prototyping/
-│       ├── SKILL.md             # 原型验证
-│       └── spec-document-reviewer-prompt.md
-├── raw/                         # 原始文档（待摄入，用户自建）
+│   ├── prototyping/
+│   │   ├── SKILL.md             # 原型验证（编排器）
+│   │   └── spec-document-reviewer-prompt.md
+│   ├── pm-writing-plans/SKILL.md # 实施计划编写（TDD 铁律）
+│   ├── pm-tdd/
+│   │   ├── SKILL.md             # 测试驱动开发（Iron Law）
+│   │   └── testing-anti-patterns.md
+│   ├── pm-executing-plans/SKILL.md # 计划执行（阻塞即停）
+│   ├── pm-verification/SKILL.md  # 验证门控（证据先行）
+│   ├── pm-branch-management/SKILL.md # 分支收尾（操作手册）
+│   ├── pm-using-worktrees/SKILL.md # 工作树管理（隔离工作空间）
+│   └── pm-frontend-design/SKILL.md # 前端设计（UI组件/视觉/交互）
+├── raw/                         # 知识摄入队列（进入即摄入，workflow 自动检测变化）
 └── README.md
 ```
 
@@ -40,6 +49,13 @@ PM_skills/
 | `/visual-companion` | workflow 内部调用 | 浏览器端可视化辅助 |
 | `/write-prd` | workflow 内部调用 | PRD 撰写（增量，不重复 spec） |
 | `/prototyping` | workflow 内部调用（可选） | 原型验证（技术规格+实施计划+骨架代码） |
+| `/pm-writing-plans` | prototyping 子阶段 2 自动调用 | 实施计划编写（bite-sized TDD、无占位符铁律） |
+| `/pm-tdd` | pm-writing-plans/pm-executing-plans 内部引用 | 测试驱动开发（Iron Law、合理化防御） |
+| `/pm-executing-plans` | prototyping 子阶段 3 自动调用 | 计划执行（逐步骤、阻塞即停、TodoWrite） |
+| `/pm-verification` | prototyping 子阶段 5 自动调用 | 验证门控（证据先行、5步门控函数） |
+| `/pm-branch-management` | prototyping 子阶段 6 自动调用 | 分支收尾（环境检测、4/3选项、provenance清理） |
+| `/pm-using-worktrees` | pm-writing-plans/pm-executing-plans 引用 | 工作树管理（隔离工作空间） |
+| `/pm-frontend-design` | prototyping 子阶段 1.5（可选，仅前端原型） | 前端设计（UI组件结构/视觉方向/交互模式） |
 
 ## 使用方式
 
