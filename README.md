@@ -1,4 +1,4 @@
-# PM Skills
+# PM Skills v2.0.0
 
 > 你不需要懂编程、不需要懂 AI。只要能跟着一步步操作，就能用。
 
@@ -219,7 +219,14 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 | `pm-brainstorming` | 需求探索与设计 | 创建新功能/组件前 |
 | `visual-companion` | 浏览器端可视化辅助 | brainstorming 中视觉问题 |
 | `write-prd` | PRD 撰写（增量，不重复 spec） | 设计文档通过后 |
-| `prototyping` | 原型验证（技术规格+实施计划+骨架代码） | PRD 通过后用户选择进入 |
+| `prototyping` | 原型验证（编排器，委托 pm-* 子 skill） | PRD 通过后用户选择进入 |
+| `pm-writing-plans` | 实施计划编写（TDD 铁律 + 无占位符） | prototyping 子阶段 2 |
+| `pm-tdd` | 测试驱动开发（Iron Law + 合理化防御） | pm-writing-plans/pm-executing-plans 内部引用 |
+| `pm-executing-plans` | 计划执行（逐步骤 + 阻塞即停） | prototyping 子阶段 3 |
+| `pm-verification` | 验证门控（证据先行 + 5步门控函数） | prototyping 子阶段 5 |
+| `pm-branch-management` | 分支收尾（操作手册 + provenance 清理） | prototyping 子阶段 6 |
+| `pm-using-worktrees` | 工作树管理（隔离工作空间） | pm-writing-plans/pm-executing-plans 引用 |
+| `pm-frontend-design` | 前端设计（UI组件/视觉/交互） | prototyping 子阶段 1.5（可选，仅前端原型） |
 
 ### 工作流
 
@@ -229,7 +236,9 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 阶段1: pm-brainstorming   需求探索（基于知识基础）
 阶段2: write-prd       PRD 撰写（增量补充 spec） ← 默认终点
 阶段3: prototyping     原型验证（可选，用户选择后进入）
-  子阶段: 技术规格 → 实施计划 → 骨架构建 → 审查 → 验证 → 分支管理
+  子阶段: 技术规格 → [前端设计] → 实施计划 → 骨架构建 → 审查 → 验证 → 分支管理
+    ↳ 前端设计仅 UI 原型时执行（pm-frontend-design）
+    ↳ 实施计划/骨架构建/验证/分支管理 委托 pm-* skill（Iron Law 执行纪律）
 ```
 
 知识流：
@@ -323,6 +332,21 @@ skills/pm-skills/
   prototyping/
     SKILL.md
     spec-document-reviewer-prompt.md
+  pm-writing-plans/
+    SKILL.md
+  pm-tdd/
+    SKILL.md
+    testing-anti-patterns.md
+  pm-executing-plans/
+    SKILL.md
+  pm-verification/
+    SKILL.md
+  pm-branch-management/
+    SKILL.md
+  pm-using-worktrees/
+    SKILL.md
+  pm-frontend-design/
+    SKILL.md
 ```
 
 </details>
