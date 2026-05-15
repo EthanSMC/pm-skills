@@ -1,14 +1,23 @@
 {
-  "name": "pm-skills",
-  "version": "1.2.0",
+  "name": "@ethansmc/pm-skills",
+  "version": "2.0.0",
   "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求探索到 PRD 撰写，可选原型验证",
   "author": "shenmingchong",
   "license": "MIT",
-  "keywords": ["claude", "skills", "pm", "product-manager", "workflow", "prd", "brainstorming"],
+  "keywords": ["claude", "skills", "pm", "product-manager", "workflow", "prd", "brainstorming", "prototyping", "tdd", "verification"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shenmingchong/PM_skills"
+    "url": "https://github.com/EthanSMC/pm-skills"
   },
+  "homepage": "https://github.com/EthanSMC/pm-skills#readme",
+  "bugs": {
+    "url": "https://github.com/EthanSMC/pm-skills/issues"
+  },
+  "files": [
+    "skills/",
+    ".claude-plugin/",
+    "CLAUDE.md"
+  ],
   "optionalDependencies": {
     "mineru-document-explorer": "^1.0.9"
   }
