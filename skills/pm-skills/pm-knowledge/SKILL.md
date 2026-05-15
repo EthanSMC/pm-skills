@@ -305,7 +305,7 @@ PM 知识分两层存储，维度不同、职责不同：
 ### 2. Query — 知识检索
 
 **触发时机：**
-- 用户直接提问
+- 用户直接提问（CLAUDE.md 的"知识自动路由"规则会在用户提问时自动触发 wiki 检索）
 - pm-brainstorming skill 开始前自动调用（见衔接逻辑）
 
 **检索流程：**
@@ -346,6 +346,38 @@ PM 知识分两层存储，维度不同、职责不同：
 
 **检索模式：** MCP | CLI | 文件系统
 ```
+
+#### Query 回写 — 知识探索产出沉淀
+
+Query 不只是检索，好的回答本身就是新知识。以下场景的 query 产出应该回写到 wiki：
+
+**回写触发条件**（满足任一即回写）：
+
+| 触发条件 | 说明 | 示例 |
+|---------|------|------|
+| 跨页综合 | 回答综合了 ≥3 个 wiki 页面内容 | "竞品A vs 竞品B vs 竞品C 功能对比" |
+| 新发现 | 回答揭示了 wiki 中没有的新关联或模式 | "三个竞品都在Q2上线了相似功能，可能是行业趋势" |
+| 矛盾发现 | 回答发现了 wiki 中的矛盾信息 | "两份调研对同一用户痛点的结论相反" |
+| 用户明确要求 | 用户说"帮我整理/总结/对比" | "帮我整理一下目前所有的决策记录" |
+
+**回写流程**：
+
+1. **判断** — 检查回答是否满足上述触发条件
+2. **分类** — 确定写入路径：
+   - 竞品/产品对比 → `competitors/对比-<主题>.md`
+   - 趋势/模式发现 → `synthesis/<主题>.md`
+   - 矛盾标记 → 更新已有页面的 `contradicts` 关系 + 建议用户确认 supersession
+   - 整理/总结 → `synthesis/整理-<主题>.md`
+   - 不确定 → 先写 `synthesis/`，后续可提炼到其他目录
+3. **写入** — 使用 `doc_write` 按_pm Wiki Schema 写入，frontmatter 标记 `type: analysis`、`status: pending-review`（分析性内容待审）、`derived_from` 列出综合的源页面
+4. **更新引用** — 在被综合的源页面 frontmatter 的 `relations.references` 中加入新页面
+5. **审核分流** — 综合类回答属于分析性内容，写入时标记 `> [待审]`，向用户呈现摘要等待确认
+6. **日志** — 在 `.pm-wiki/log.md` 中追加回写记录
+
+**不回写的情况**：
+- 单页引用（回答只引用了1个 wiki 页面，无需新建）
+- 事实搬运（回答只是复述已有事实，没有新综合）
+- 用户明确说"不需要记录"
 
 ### 3. Lint — 知识健康检查
 
@@ -539,7 +571,7 @@ PM workflow执行时自动触发的6个钩子：
 | `on_new_source` | 用户提供新文档 | ingest → extract entities → build graph → check contradictions → suggest supersession | pm-knowledge Ingest流程 |
 | `on_session_start` | pm-brainstorming/prototyping启动前 | query项目库 → 注入知识摘要 → 标注缺口 | pm-knowledge→pm-brainstorming衔接（已有） |
 | `on_session_end` | 会话结束 | compress → _working/ → crystallize到L1 | pm-wiki-crystallize.py session-end |
-| `on_query` | 知识检索后 | 检查是否值得回写wiki | pm-knowledge Query流程 |
+| `on_query` | 知识检索后 | 判断回写条件 → 综合性回答写入wiki → 更新引用 → 审核分流 | pm-knowledge Query回写流程 |
 | `on_memory_write` | 写入wiki页面时 | 检查contradicts → 建议supersession → 更新confidence | pm-wiki-lint.py supersession |
 | `on_schedule` | 定期 | confidence衰减 + stale标记 + distill | CronCreate |
 
@@ -739,3 +771,4 @@ tags: [synthesis]
 - **不重复造轮子** — 所有文档解析、检索、wiki 维护的底层工作委托给 MinerU (qmd)
 - **三级降级** — MCP → CLI → 文件系统，任一层级可用即可工作
 - **raw 是队列不是仓库** — 进入 raw/ 的文件必须被摄入，摄入后保留但标记已处理；每次工作流启动检查 raw/ 变化
+- **好回答也是新知识** — 跨页综合、新发现、矛盾标记等 query 产出应回写 wiki，不让知识探索沉没在对话历史中
