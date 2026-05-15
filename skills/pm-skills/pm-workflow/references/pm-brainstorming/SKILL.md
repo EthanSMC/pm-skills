@@ -1,6 +1,6 @@
 ---
 name: pm-brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+description: "PM 需求探索与设计（内部子 skill，由 pm-workflow 调度）— 理解意图、收集需求、探索设计选项"
 ---
 
 # Brainstorming Ideas Into Designs
@@ -8,6 +8,25 @@ description: "You MUST use this before any creative work - creating features, bu
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
 
 Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
+
+## 当由 pm-workflow 调度时
+
+pm-workflow 在阶段 1（需求探索）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **输入** | 阶段0的知识摘要 + 用户任务描述 |
+| **输出** | 设计文档（docs/pm/specs/）+ 设计决策（.pm-wiki/decisions/） |
+| **知识写回** | decisions/ + log.md |
+
+### 执行后交接
+
+完成后，向 pm-workflow 汇报：
+- 设计文档路径和摘要
+- 设计方案要点（核心功能、关键交互）
+- 重要决策及替代方案（WHY NOT）
 
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.

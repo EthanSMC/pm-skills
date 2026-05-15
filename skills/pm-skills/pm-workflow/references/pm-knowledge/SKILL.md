@@ -1,11 +1,30 @@
 ---
 name: pm-knowledge
-description: "PM 知识管理模块 — 摄入、组织、检索产品相关知识，为需求分析和 pm-brainstorming 提供知识基础。基于 MinerU Document Explorer (qmd)，支持 MCP/CLI/文件系统三级降级。"
+description: "PM 知识引擎（内部子 skill，由 pm-workflow 调度）— 文档摄入、知识检索、知识组织"
 ---
 
 # PM Knowledge — 产品经理知识引擎
 
 为 PM 工作流提供知识基础设施。负责摄入各种格式的文档，按 PM 维度组织知识、支持语义检索和 wiki 维护，为 pm-brainstorming 和需求分析提供知识支撑。
+
+## 当由 pm-workflow 调度时
+
+pm-workflow 在阶段 0（知识准备）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **输入** | 用户任务描述 + raw/ 目录状态 + manifest 变化检测结果 |
+| **输出** | 知识摘要（传递给阶段1 pm-brainstorming） |
+| **知识写回** | .pm-wiki/ 各子目录 + raw-manifest 更新 |
+
+### 执行后交接
+
+完成后，向 pm-workflow 汇报：
+- 知识库新增/修改的文件路径和摘要
+- 知识摘要要点（3-5条关键发现）
+- 知识缺口说明
 
 ## 前置依赖
 

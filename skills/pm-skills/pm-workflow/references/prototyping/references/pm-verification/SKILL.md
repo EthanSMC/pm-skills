@@ -1,9 +1,39 @@
 ---
 name: pm-verification
-description: "PM 验证门控 — 在声称工作完成前必须运行验证命令并确认输出。证据先行，永远如此。在 prototyping 子阶段 5 使用。"
+description: "验证门控（内部子 skill，由 prototyping 调度）— 证据先行、5步门控函数、合理化防御"
 ---
 
 # Verification Before Completion (PM)
+
+## 当由 prototyping 调度时
+
+prototyping 在子阶段 5（验证）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **验证目标** | 原型专属：骨架可编译、可运行、关键场景可走通、PRD需求有对应stub |
+| **PM 上下文** | 验证原型骨架，不是验证生产代码 |
+| **知识写回** | .pm-wiki/log.md |
+
+### 原型专属验证目标
+
+| 声明 | 需要的证据 |
+|------|----------|
+| 骨架可编译 | 构建命令：exit 0 |
+| 骨架可运行 | 启动命令：无崩溃 |
+| 关键场景可走通 | 每个场景的运行输出 |
+| PRD需求有对应stub | 逐条对照清单 |
+
+### 交接声明
+
+```
+我正在使用 pm-verification skill 来验证这个原型。
+
+验证目标：骨架可编译、可运行、关键场景可走通、PRD需求有对应stub。
+原型上下文：验证原型骨架，不是验证生产代码。
+```
 
 ## Announcement
 

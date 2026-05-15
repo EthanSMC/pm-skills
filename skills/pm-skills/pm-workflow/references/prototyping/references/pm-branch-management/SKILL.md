@@ -1,6 +1,6 @@
 ---
 name: pm-branch-management
-description: "PM 分支收尾 — 原型开发完成后引导分支整合（合并/PR/保留/丢弃）。在 prototyping 子阶段 6 使用。"
+description: "分支收尾（内部子 skill，由 prototyping 调度）— 环境检测、4/3选项菜单、provenance 清理"
 ---
 
 # PM Branch Management
@@ -14,6 +14,27 @@ Guide completion of prototype development work by presenting clear options and h
 **Announce at start:** "I'm using the pm-branch-management skill to complete this prototype branch."
 
 In prototype context, the feature branch contains scaffold/stub code, not production implementations. Merge decisions should consider whether the prototype is ready for production or needs further implementation.
+
+## 当由 prototyping 调度时
+
+prototyping 在子阶段 6（分支管理）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **前提** | pm-verification 已确认原型通过 |
+| **PM 上下文** | 特性分支包含骨架/stub代码，合并决策需评估原型是否 ready for production |
+| **知识写回** | .pm-wiki/log.md + .pm-wiki/synthesis/ |
+
+### 交接声明
+
+```
+我正在使用 pm-branch-management skill 来完成这个原型分支。
+
+前提：pm-verification 已确认原型通过。
+原型上下文：分支包含骨架/stub代码，合并决策需评估是否 ready for production。
+```
 
 ## PM Pipeline Context
 

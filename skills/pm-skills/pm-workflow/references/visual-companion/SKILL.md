@@ -1,11 +1,19 @@
 ---
 name: visual-companion
-description: "Browser-based visual brainstorming companion — 在脑暴过程中展示mockup、架构图、可视化选项。当问题涉及UI布局、架构图、视觉对比时使用浏览器展示，文字类问题仍用终端。"
+description: "浏览器可视化辅助（内部子 skill，由 pm-brainstorming 调度）— 在 brainstorming 中提供视觉探索支持"
 ---
 
 # Visual Companion Guide
 
 Browser-based visual brainstorming companion for showing mockups, diagrams, and options.
+
+## 当由 pm-workflow 调度时
+
+visual-companion 不由 pm-workflow 直接调度，而是由 pm-brainstorming 在需要视觉探索时内部调用。pm-workflow 不干预此调用。
+
+### 间接调度路径
+
+pm-workflow → pm-brainstorming → visual-companion（按需）
 
 ## When to Use
 

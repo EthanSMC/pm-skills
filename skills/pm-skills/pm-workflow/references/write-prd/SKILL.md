@@ -1,11 +1,30 @@
 ---
 name: write-prd
-description: "根据 pm-brainstorming 产出的设计文档，撰写正式的产品需求文档（PRD）。将设计意图转化为可评审的需求规格。"
+description: "PRD 撰写（内部子 skill，由 pm-workflow 调度）— 增量补充功能需求、验收标准、优先级，不重复 spec 已有内容"
 ---
 
 # Write a PRD
 
 将 pm-brainstorming 阶段产出的设计文档转化为正式的产品需求文档（PRD）。
+
+## 当由 pm-workflow 调度时
+
+pm-workflow 在阶段 2（撰写 PRD）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **输入** | 设计文档（docs/pm/specs/） |
+| **输出** | PRD（docs/pm/prds/） |
+| **知识写回** | requirements/ |
+
+### 执行后交接
+
+完成后，向 pm-workflow 汇报：
+- PRD 文件路径
+- 功能需求表摘要（功能名 + 优先级）
+- 验收标准概览
 
 ## 核心原则
 

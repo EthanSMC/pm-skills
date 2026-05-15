@@ -1,9 +1,17 @@
 ---
 name: pm-using-worktrees
-description: PM 工作树管理 — 为原型开发创建隔离工作空间。在 pm-writing-plans 和 pm-executing-plans 执行前使用。优先平台原生工具，git worktree 降级兜底。
+description: 工作树管理（内部子 skill，由 pm-writing-plans/pm-executing-plans 引用）— 隔离工作空间
 ---
 
 # Using Git Worktrees (PM Adaptation)
+
+## 调度路径
+
+pm-using-worktrees 不由 pm-workflow 或 prototyping 直接调度，而是由 pm-writing-plans 和 pm-executing-plans 内部引用：
+- pm-workflow → prototyping → pm-writing-plans → pm-using-worktrees（计划前创建隔离环境）
+- pm-workflow → prototyping → pm-executing-plans → pm-using-worktrees（执行前创建隔离环境）
+
+pm-using-worktrees 的 worktree 创建逻辑在 pm-writing-plans 和 pm-executing-plans 需要隔离环境时自动生效。
 
 ## Overview
 

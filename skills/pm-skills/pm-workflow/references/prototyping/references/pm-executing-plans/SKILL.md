@@ -1,9 +1,34 @@
 ---
 name: pm-executing-plans
-description: PM 计划执行 — 加载并执行 pm-writing-plans 产出的实施计划，在 prototyping 子阶段 3（骨架构建）使用。
+description: 计划执行（内部子 skill，由 prototyping 调度）— 逐步骤执行、阻塞即停、验证不跳过
 ---
 
 # PM Executing Plans
+
+## 当由 prototyping 调度时
+
+prototyping 在子阶段 3（骨架构建）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **Input Plan** | docs/prototype/<feature>/plan.md（子阶段 2 产出） |
+| **Output** | 骨架代码 + docs/prototype/<feature>/scaffold-index.md |
+| **PM 上下文** | 原型 scope：任务产出 stubs/mocks/scaffolds，不是生产实现。骨架原则：接口定义优先，mock数据返回优先，可编译可运行优先。 |
+| **知识写回** | .pm-wiki/constraints/ + .pm-wiki/_working/ + .pm-wiki/decisions/ |
+
+### 交接声明
+
+```
+我正在使用 pm-executing-plans skill 来执行这个原型的实施计划。
+
+输入：docs/prototype/<feature>/plan.md
+输出：骨架代码 + docs/prototype/<feature>/scaffold-index.md
+
+原型上下文：任务产出 stubs/mocks/scaffolds，不是生产实现。
+骨架原则：接口定义优先，mock数据返回优先，可编译可运行优先。
+```
 
 ## Overview
 

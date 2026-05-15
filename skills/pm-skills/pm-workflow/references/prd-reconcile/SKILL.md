@@ -1,11 +1,30 @@
 ---
 name: prd-reconcile
-description: "PRD合并与消歧 — 将多份分批构建的PRD/需求文档合并为一份全局PRD。系统化识别跨文档冲突，引导逐一决策，产出无歧义的统一文档。Make sure to use this skill whenever the user has multiple PRD or requirement documents that need merging, mentions cross-document conflicts or inconsistencies, says they need a 'global PRD' or 'unified PRD', or has incrementally-built documents that need reconciliation — even if they just say 'these documents conflict' or 'merge these docs' without explicitly asking for a 'PRD reconcile'."
+description: "多文档合并与消歧（内部子 skill，由 pm-workflow 调度）— 多份PRD/需求文档冲突分析、合并、完整度补全"
 ---
 
 # PRD Reconcile — 多文档合并与消歧
 
 将分批构建的多份PRD/需求文档合并为一份权威的全局PRD。系统化识别冲突、引导逐一决策、确保合并后无歧义。
+
+## 当由 pm-workflow 调度时
+
+pm-workflow 在阶段 0a（多文档合并）使用 Skill 工具调用此 skill。仅在用户有多份PRD/需求文档需要合并时触发。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **输入** | 需合并的文档列表 |
+| **输出** | 合并后的全局PRD + 完整度报告 |
+| **知识写回** | synthesis/ + decisions/ |
+
+### 执行后交接
+
+完成后，向 pm-workflow 汇报：
+- 合并后的全局PRD路径
+- 冲突分析摘要（多少冲突、如何决策）
+- 完整度报告摘要（哪些维度有缺失、是否已自动补全）
 
 ## 适用场景
 

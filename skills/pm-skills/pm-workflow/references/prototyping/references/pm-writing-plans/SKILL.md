@@ -1,9 +1,33 @@
 ---
 name: pm-writing-plans
-description: PM 实施计划编写 — 基于 PRD 技术规格编写 bite-sized TDD 实施计划。在 prototyping 子阶段 2 使用。
+description: 实施计划编写（内部子 skill，由 prototyping 调度）— bite-sized TDD 任务、无占位符铁律、scope check
 ---
 
 # Writing Plans (PM Adaptation)
+
+## 当由 prototyping 调度时
+
+prototyping 在子阶段 2（实施计划）使用 Skill 工具调用此 skill。
+
+### 交接参数
+
+| 参数 | 值 |
+|------|------|
+| **Input Spec** | docs/prototype/<feature>/spec.md（子阶段 1 产出） |
+| **Output** | docs/prototype/<feature>/plan.md |
+| **PM 上下文** | 原型 scope：minimal implementation = stub/mock returns，不是生产逻辑 |
+| **知识写回** | .pm-wiki/decisions/ + .pm-wiki/constraints/ |
+
+### 交接声明
+
+```
+我正在使用 pm-writing-plans skill 来编写这个原型的实施计划。
+
+输入：docs/prototype/<feature>/spec.md
+输出：docs/prototype/<feature>/plan.md
+
+原型上下文：minimal implementation = stub/mock returns，不是生产逻辑。
+```
 
 ## Overview
 

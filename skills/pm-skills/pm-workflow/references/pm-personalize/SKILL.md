@@ -1,11 +1,27 @@
 ---
 name: pm-personalize
-description: "从项目知识库中提炼通用、可复用的知识到个人知识库。定时或手动运行。当用户说'提炼个人知识'、'总结通用知识'、'更新个人 wiki'时使用此 skill。"
+description: "个人知识提炼（内部子 skill，由 pm-workflow 或 pm-knowledge 建议）— 从项目知识库提炼通用知识到个人知识库"
 ---
 
 # PM Personalize — 个人知识提炼
 
 从项目 wiki 中识别跨项目通用的知识，提炼并写入个人知识库。
+
+## 当由 pm-workflow 调度时
+
+pm-personalize 不是工作流的标准阶段，而是按需触发：
+- pm-knowledge 在 ingest 后可能建议用户提炼个人知识
+- 用户在任意门控决策点可以要求执行个人知识提炼
+
+### 触发方式
+
+无需通过 Skill 工具显式调用。当 pm-knowledge 建议提炼或用户要求时，按此 skill 的流程执行。
+
+### 执行后交接
+
+完成后，向 pm-workflow 汇报：
+- 提炼的知识条目列表
+- 个人知识库新增路径
 
 ## 核心原则
 

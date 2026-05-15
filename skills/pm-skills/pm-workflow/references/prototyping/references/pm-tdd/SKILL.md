@@ -1,11 +1,19 @@
 ---
 name: pm-tdd
-description: PM TDD 驱动开发 — 在 prototyping 实施计划编写和骨架构建阶段使用。写测试先行，看它失败，写最小实现通过。
+description: 测试驱动开发（内部子 skill，由 pm-writing-plans/pm-executing-plans 引用）— Iron Law 执行纪律、合理化防御
 ---
 
 # Test-Driven Development (PM Adaptation)
 
 **Announce at start:** "I'm using the pm-tdd skill to drive this implementation."
+
+## 调度路径
+
+pm-tdd 不由 pm-workflow 或 prototyping 直接调度，而是由 pm-writing-plans 和 pm-executing-plans 内部引用：
+- pm-workflow → prototyping → pm-writing-plans → pm-tdd（TDD 铁律）
+- pm-workflow → prototyping → pm-executing-plans → pm-tdd（执行纪律）
+
+pm-tdd 的 Iron Law 和合理化防御表在 pm-writing-plans 和 pm-executing-plans 执行时自动生效。
 
 ## Overview
 
