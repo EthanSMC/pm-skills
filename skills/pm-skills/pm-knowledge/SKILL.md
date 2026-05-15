@@ -334,11 +334,22 @@ PM 知识分两层存储，维度不同、职责不同：
 3. 按 frontmatter 的 tags、type 字段过滤
 
 **输出格式：**
+
+根据问题类型选择最合适的呈现方式，不是所有回答都该用同一个模板：
+
+| 问题类型 | 推荐格式 | 说明 |
+|---------|---------|------|
+| 竞品/方案对比 | **对比表** | markdown table，每行一个竞品/方案，列是对比维度 |
+| 时间线问题 | **时间线** | 按时间排列的事件列表，标注因果关系（caused_by） |
+| 依赖/影响分析 | **依赖图** | 从节点出发列出 depends_on / uses / caused_by 链条 |
+| 综合分析 | **摘要页** | 标准 wiki 页面格式（要点+机会+风险+建议） |
+| 简单事实查询 | **简答+来源** | 一句话回答 + 来源引用（最简格式） |
+| 需要展示给他人 | **Brief** | 结构化简报（背景+发现+建议+附录），适合转给团队成员 |
+| 数据统计 | **表格/CSV** | 结构化数据用 markdown table，大量数据用 CSV 导出 |
+
+所有格式都附来源引用和检索模式标注：
+
 ```
-## 回答
-
-[综合回答内容]
-
 **来源：**
 - [项目知识库] competitors/产品A.md — 竞品功能对比
 - [个人知识库] industry/趋势2026.md — 市场数据
@@ -410,15 +421,18 @@ Query 不只是检索，好的回答本身就是新知识。以下场景的 quer
 
 ### 4.1 Relations语法
 
-Relations 作为元数据放在 frontmatter（不在正文）。5种PM专用关系类型：
+Relations 作为元数据放在 frontmatter（不在正文）。8种PM专用关系类型：
 
-| 类型 | 语义 | 方向 |
-|------|------|------|
-| `references` | 引用/参考 | 单向 |
-| `depends_on` | 依赖/前置 | 单向 |
-| `derived_from` | 推导来源 | 单向 |
-| `supersedes` | 取代 | 单向 |
-| `contradicts` | 矛盾 | 双向 |
+| 类型 | 语义 | 方向 | PM 示例 |
+|------|------|------|---------|
+| `references` | 引用/参考 | 单向 | 决策引用了某份竞品分析 |
+| `depends_on` | 依赖/前置 | 单向 | 功能B依赖功能A先上线 |
+| `derived_from` | 推导来源 | 单向 | 设计决策推导自用户调研 |
+| `supersedes` | 取代 | 单向 | 新版状态体系取代旧版 |
+| `contradicts` | 矛盾 | 双向 | 两份调研对同一痛点结论相反 |
+| `uses` | 使用/采用 | 单向 | 项目使用 React 技术栈，功能使用支付服务 |
+| `caused_by` | 因果（被导致） | 单向 | 功能需求由用户痛点导致，决策由约束导致 |
+| `resolved_by` | 被…解决 | 单向 | 痛点被新功能解决，问题被决策解决 |
 
 实体类型6种：`decision` / `concept` / `person` / `project` / `document` / `component`
 
@@ -431,6 +445,9 @@ relations:
   derived_from: ["运营管理平台-PRD.docx"]
   supersedes: ["旧版状态体系"]
   contradicts: []
+  uses: ["react-tech-stack", "payment-service"]
+  caused_by: ["用户痛点-操作繁琐"]
+  resolved_by: ["一键审批功能"]
 entities:
   - {type: decision, name: "C12-节点挂起主任务不回退"}
 ---
@@ -602,6 +619,9 @@ relations:
   derived_from: ["运营管理平台-PRD.docx"]
   supersedes: ["旧版状态体系"]
   contradicts: []
+  uses: ["react-tech-stack"]
+  caused_by: ["用户痛点-操作繁琐"]
+  resolved_by: ["一键审批功能"]
 ---
 ```
 
