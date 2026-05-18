@@ -1,4 +1,4 @@
-# PM Skills v2.0.2
+# PM Skills v2.0.3
 
 > 你不需要懂编程、不需要懂 AI。只要能跟着一步步操作，就能用。
 
@@ -231,7 +231,7 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 | `pm-workflow` | 主编排 skill，串联所有阶段 | `/pm-workflow [任务描述]` |
 | `pm-knowledge` | 知识引擎（摄入、检索、组织） | 知识摄入/查询时自动调用 |
 | `pm-personalize` | 从项目库提炼通用知识到个人库 | 显式调用或 ingest 后自动建议 |
-| `prd-reconcile` | 多文档合并与消歧 | 多份PRD/需求文档需合并时 |
+| `prd-reconcile` | 多文档消歧（冲突分析→决策→合并） | 多份PRD/需求文档需合并时 |
 | `pm-brainstorming` | 需求探索与设计 | 创建新功能/组件前 |
 | `visual-companion` | 浏览器端可视化辅助 | brainstorming 中视觉问题 |
 | `write-prd` | PRD 撰写（增量，不重复 spec） | 设计文档通过后 |
@@ -248,7 +248,7 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
 
 ```
 阶段0: pm-knowledge    知识准备（检索已有知识）
-阶段0a: prd-reconcile  多文档合并与消歧（按需）
+阶段0a: prd-reconcile  消歧分支（冲突分析→决策→合并，不重复摄入）
 阶段1: pm-brainstorming   需求探索（基于知识基础）
 阶段2: write-prd       PRD 撰写（增量补充 spec） ← 默认终点
 阶段3: prototyping     原型验证（可选，用户选择后进入）
@@ -270,7 +270,7 @@ Claude 会引导你走完整个流程：整理知识 → 讨论需求 → 写 PR
                                                  ↓ (是)                ↓ (否)
                                          prototyping → 原型产出       工作流结束
 
-多份PRD → prd-reconcile → 冲突分析 → 决策 → 全局PRD → requirements/
+多份PRD → prd-reconcile → 冲突分析 → 决策 → 全局PRD（产出由 pm-knowledge ingest 管理）
 ```
 
 ### 知识库架构

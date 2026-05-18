@@ -751,7 +751,7 @@ tags: [synthesis]
 
 | 阶段 | 写入路径 | 内容 |
 |------|---------|------|
-| prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 |
+| prd-reconcile | `synthesis/` + `decisions/` | 冲突分析 + 决策记录 + 完整度报告（由 pm-knowledge ingest 管理存储路径和 frontmatter） |
 | pm-brainstorming | `decisions/` | 设计决策（WHY/WHAT/WHY NOT） |
 | write-prd | `requirements/` | 功能需求摘要 + 优先级 |
 | prototyping (技术规格) | `decisions/` + `constraints/` | 架构决策 + 新约束 |

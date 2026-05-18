@@ -15,7 +15,7 @@ PM_skills/
 │   │   ├── SKILL.md             # 知识引擎
 │   │   └── scripts/             # Python 工具脚本
 │   ├── pm-personalize/SKILL.md  # 个人知识提炼
-│   ├── prd-reconcile/SKILL.md   # 多文档合并与消歧
+│   ├── prd-reconcile/SKILL.md   # 多文档消歧（冲突分析→决策→合并）
 │   ├── pm-brainstorming/SKILL.md # 需求探索与设计
 │   ├── visual-companion/
 │   │   ├── SKILL.md             # 浏览器可视化辅助
@@ -44,7 +44,7 @@ PM_skills/
 | `/pm-workflow` | 显式调用 | 主编排，串联知识→脑暴→PRD→可选原型 |
 | `/pm-knowledge` | 显式调用或 workflow 自动调用 | 知识摄入、检索、组织 |
 | `/pm-personalize` | 显式调用或 ingest 后自动建议 | 从项目库提炼通用知识到个人库 |
-| `/prd-reconcile` | 显式调用 | 多份PRD/需求文档合并与消歧 |
+| `/prd-reconcile` | 显式调用 | 多份PRD/需求文档消歧（冲突分析→决策→合并，知识存储由 pm-knowledge 管理） |
 | `/pm-brainstorming` | 显式调用或 workflow 自动调用 | 需求探索与设计 |
 | `/visual-companion` | workflow 内部调用 | 浏览器端可视化辅助 |
 | `/write-prd` | workflow 内部调用 | PRD 撰写（增量，不重复 spec） |
