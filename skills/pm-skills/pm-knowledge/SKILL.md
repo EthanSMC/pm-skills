@@ -31,12 +31,14 @@ qmd --version
 qmd --version
 
 # 2. 检查/创建项目知识库 collection
-qmd collection list | grep pm-project
+qmd collection list | grep pm-project   # Linux/macOS
+# Windows PowerShell: qmd collection list | Select-String pm-project
 # 如果不存在，手动创建（注意：qmd 会将 collection name 解析为相对于 cwd 的路径）
 # 推荐使用 qmd collection add pm-project 在当前目录下创建子目录
 
 # 3. 检查/创建个人知识库 collection
-qmd collection list | grep pm-personal
+qmd collection list | grep pm-personal  # Linux/macOS
+# Windows PowerShell: qmd collection list | Select-String pm-personal
 
 # 4. 生成向量嵌入（启用语义搜索）
 qmd embed
@@ -260,6 +262,7 @@ PM 知识分两层存储，维度不同、职责不同：
 
 **MCP 模式：** 调用 `doc_write(wiki=<collection>, path="<category>/<page>.md", content="<markdown_with_frontmatter>", source="<docid>")`
 **CLI 模式：** `echo "<content>" | qmd wiki write <collection> <path> --source <docid>`
+# Windows PowerShell 用户请使用等效命令和引号语法，如 `Set-Content` 或 `${"<content>"}`，然后传递到 `qmd wiki write`
 
 页面内容必须符合 PM Wiki Schema（见下方），frontmatter 必须包含 `source`、`type`、`status`、`ingested`。
 
@@ -320,7 +323,8 @@ PM 知识分两层存储，维度不同、职责不同：
 #### 模式 B：CLI 可用（MCP 不可用时）
 1. 解析用户意图，提取关键词和概念
 2. 执行 `qmd query "<query>" -n 5` — 混合检索（BM25 + vector + rerank）
-3. 如果需要更精确：`qmd query $'lex: <关键词>\nvec: <语义>' -n 5`
+3. 如果需要更精确：`qmd query $'lex: <关键词>\nvec: <语义>' -n 5`  # bash
+# Windows PowerShell 用户请使用等效换行字符串或多行引号语法
 4. 按优先级路由：项目库 → 全局库
 5. 如果 wiki 知识不足以回答，回源到原始文档：
    - `qmd doc-toc <docid>` 获取文档结构（PDF 显示 pages，MD 显示 headings）
