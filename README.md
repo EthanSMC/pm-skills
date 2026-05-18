@@ -18,56 +18,68 @@ PM Skills 采用 [Agent Skills 开放标准](https://agentskills.io) 格式（YA
 
 ### Claude Code
 
-**方式 A：Marketplace 安装（推荐）**
+**方式 A：npm 安装（推荐）**
+
+```bash
+npm install @ethansmc/pm-skills
+```
+
+安装后把 `node_modules/@ethansmc/pm-skills/skills/pm-skills/pm-workflow/` 复制到项目里：
+
+```bash
+cp -r node_modules/@ethansmc/pm-skills/skills/pm-skills/pm-workflow  你的项目/.claude/skills/pm-workflow
+```
+
+重启 Claude Code，输入 `/` 应能看到 pm-workflow skill。
+
+**方式 B：Marketplace 安装**
 
 ```bash
 claude plugin marketplace add https://github.com/EthanSMC/pm-skills
 claude plugin install pm-skills
 ```
 
-重启 Claude Code，输入 `/` 应能看到这些 skill。
+重启 Claude Code，输入 `/` 应能看到 pm-workflow skill。
 
-**方式 B：手动复制**
+**方式 C：手动复制**
 
-把 `skills/pm-skills/` 下的所有文件夹复制到项目里：
-
+```bash
+git clone https://github.com/EthanSMC/pm-skills.git
+cp -r pm-skills/skills/pm-skills/pm-workflow  你的项目/.claude/skills/pm-workflow
 ```
-你的项目/.claude/skills/
-  pm-workflow/SKILL.md
-  pm-knowledge/SKILL.md          + scripts/
-  pm-personalize/SKILL.md
-  prd-reconcile/SKILL.md
-  pm-brainstorming/SKILL.md
-  visual-companion/SKILL.md      + scripts/
-  write-prd/SKILL.md
-  prototyping/SKILL.md           + spec-document-reviewer-prompt.md
-```
+
+只需复制 `pm-workflow/` 整个目录，所有子 skill 都在里面。
 
 ### Codex CLI（OpenAI）
 
 Codex CLI 使用 `.agents/skills/` 目录，SKILL.md 格式完全兼容：
 
 ```bash
-git clone https://github.com/EthanSMC/pm-skills.git
-cp -r pm-skills/skills/pm-skills/*  你的项目/.agents/skills/
+npm install @ethansmc/pm-skills
+cp -r node_modules/@ethansmc/pm-skills/skills/pm-skills/pm-workflow  你的项目/.agents/skills/pm-workflow
 ```
 
-目录结构：
-
-```
-你的项目/.agents/skills/
-  pm-workflow/SKILL.md
-  pm-knowledge/SKILL.md          + scripts/
-  ...
-```
-
-### OpenCode / Crush
-
-直接兼容 `.claude/skills/` 目录，和 Claude Code 安装方式相同：
+或手动克隆：
 
 ```bash
 git clone https://github.com/EthanSMC/pm-skills.git
-cp -r pm-skills/skills/pm-skills/*  你的项目/.claude/skills/
+cp -r pm-skills/skills/pm-skills/pm-workflow  你的项目/.agents/skills/pm-workflow
+```
+
+### OpenCode / Crush / Kimi Code
+
+直接兼容 `.claude/skills/` 目录，和 Claude Code npm 安装方式相同：
+
+```bash
+npm install @ethansmc/pm-skills
+cp -r node_modules/@ethansmc/pm-skills/skills/pm-skills/pm-workflow  你的项目/.claude/skills/pm-workflow
+```
+
+或手动克隆：
+
+```bash
+git clone https://github.com/EthanSMC/pm-skills.git
+cp -r pm-skills/skills/pm-skills/pm-workflow  你的项目/.claude/skills/pm-workflow
 ```
 
 ### Gemini CLI
@@ -75,27 +87,31 @@ cp -r pm-skills/skills/pm-skills/*  你的项目/.claude/skills/
 Gemini CLI 使用 `.gemini/skills/` 目录，每个 skill 是一个 `.md` 文件：
 
 ```bash
-git clone https://github.com/EthanSMC/pm-skills.git
-cp pm-skills/skills/pm-skills/pm-workflow/SKILL.md      你的项目/.gemini/skills/pm-workflow.md
-cp pm-skills/skills/pm-skills/pm-knowledge/SKILL.md     你的项目/.gemini/skills/pm-knowledge.md
-cp pm-skills/skills/pm-skills/pm-personalize/SKILL.md   你的项目/.gemini/skills/pm-personalize.md
-cp pm-skills/skills/pm-skills/prd-reconcile/SKILL.md    你的项目/.gemini/skills/prd-reconcile.md
-cp pm-skills/skills/pm-skills/pm-brainstorming/SKILL.md 你的项目/.gemini/skills/pm-brainstorming.md
-cp pm-skills/skills/pm-skills/visual-companion/SKILL.md 你的项目/.gemini/skills/visual-companion.md
-cp pm-skills/skills/pm-skills/write-prd/SKILL.md        你的项目/.gemini/skills/write-prd.md
-cp pm-skills/skills/pm-skills/prototyping/SKILL.md      你的项目/.gemini/skills/prototyping.md
+npm install @ethansmc/pm-skills
+```
+
+然后逐个复制 SKILL.md：
+
+```bash
+PKG=node_modules/@ethansmc/pm-skills/skills/pm-skills/pm-workflow
+cp $PKG/SKILL.md                                          你的项目/.gemini/skills/pm-workflow.md
+cp $PKG/references/pm-knowledge/SKILL.md                  你的项目/.gemini/skills/pm-knowledge.md
+cp $PKG/references/pm-brainstorming/SKILL.md              你的项目/.gemini/skills/pm-brainstorming.md
+cp $PKG/references/pm-personalize/SKILL.md                你的项目/.gemini/skills/pm-personalize.md
+cp $PKG/references/prd-reconcile/SKILL.md                 你的项目/.gemini/skills/prd-reconcile.md
+cp $PKG/references/visual-companion/SKILL.md              你的项目/.gemini/skills/visual-companion.md
+cp $PKG/references/write-prd/SKILL.md                     你的项目/.gemini/skills/write-prd.md
+cp $PKG/references/prototyping/SKILL.md                   你的项目/.gemini/skills/prototyping.md
+cp $PKG/references/prototyping/references/pm-writing-plans/SKILL.md      你的项目/.gemini/skills/pm-writing-plans.md
+cp $PKG/references/prototyping/references/pm-tdd/SKILL.md                你的项目/.gemini/skills/pm-tdd.md
+cp $PKG/references/prototyping/references/pm-executing-plans/SKILL.md   你的项目/.gemini/skills/pm-executing-plans.md
+cp $PKG/references/prototyping/references/pm-verification/SKILL.md      你的项目/.gemini/skills/pm-verification.md
+cp $PKG/references/prototyping/references/pm-branch-management/SKILL.md 你的项目/.gemini/skills/pm-branch-management.md
+cp $PKG/references/prototyping/references/pm-using-worktrees/SKILL.md   你的项目/.gemini/skills/pm-using-worktrees.md
+cp $PKG/references/prototyping/references/pm-frontend-design/SKILL.md   你的项目/.gemini/skills/pm-frontend-design.md
 ```
 
 同时把 `pm-knowledge/scripts/` 和 `visual-companion/scripts/` 也复制到项目中。
-
-### Kimi Code
-
-Kimi Code 直接兼容 `.claude/skills/` 目录（优先级：`.kimi/skills/` > `.claude/skills/` > `.codex/skills/`），安装方式和 Claude Code 手动复制相同：
-
-```bash
-git clone https://github.com/EthanSMC/pm-skills.git
-cp -r pm-skills/skills/pm-skills/*  你的项目/.claude/skills/
-```
 
 ### 其他 Agent
 
@@ -103,7 +119,7 @@ SKILL.md 的 Markdown 正文是通用的，任何能读取项目级指令的 age
 
 | Agent 类型 | 安装方式 |
 |-----------|---------|
-| 支持 Agent Skills 标准的 | 复制 SKILL.md 到对应 skills 目录，frontmatter 保留 |
+| 支持 Agent Skills 标准的 | `npm install @ethansmc/pm-skills` → 复制 pm-workflow/ 到对应 skills 目录 |
 | 用单文件指令的（AGENTS.md、kimi.md 等） | 合并所有 SKILL.md 到指令文件，删除 frontmatter |
 
 如果你的 agent 不识别 YAML frontmatter（`---` 包裹的 3 行），删除即可。Markdown 正文任何 agent 都能理解。
