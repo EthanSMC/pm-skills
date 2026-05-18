@@ -22,8 +22,7 @@ PM_skills/
 │   │   └── scripts/             # 可视化伴侣服务端
 │   ├── write-prd/SKILL.md       # PRD 撰写
 │   ├── prototyping/
-│   │   ├── SKILL.md             # 原型验证（编排器）
-│   │   └── spec-document-reviewer-prompt.md
+│   │   └── SKILL.md             # 原型验证（编排器）
 │   ├── pm-writing-plans/SKILL.md # 实施计划编写（TDD 铁律）
 │   ├── pm-tdd/
 │   │   ├── SKILL.md             # 测试驱动开发（Iron Law）

@@ -347,7 +347,6 @@ skills/pm-skills/
     SKILL.md
   prototyping/
     SKILL.md
-    spec-document-reviewer-prompt.md
   pm-writing-plans/
     SKILL.md
   pm-tdd/
