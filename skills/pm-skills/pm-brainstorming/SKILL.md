@@ -27,7 +27,7 @@ You MUST create a task for each of these items and complete them in order:
 4. **Propose 2-3 approaches** - with trade-offs and your recommendation
 5. **Present design** - in sections scaled to their complexity, get user approval after each section
 6. **Write design doc** - save to `docs/pm/specs/YYYY-MM-DD-<topic>-design.md` and commit
-7. **Spec self-review** - quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+7. **Spec self-review** - quick inline check for placeholders, contradictions, ambiguity, scope, and source completeness (see below)
 8. **User reviews written spec** - ask user to review the spec file before proceeding
 9. **Transition to next phase** - the pm-workflow orchestrator will proceed to write-prd. No further skill invocation from brainstorming.
 
@@ -120,6 +120,7 @@ After writing the spec document, look at it with fresh eyes:
 2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
 3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
 4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
+5. **Source completeness check:** Does the design cover all field definitions, validation rules, state transitions, boundary conditions, and conditional logic from the wiki source pages? If the knowledge injection flagged "高细节区域", verify those areas are fully reflected in the design. Check: data model fields → UI form fields mapping is complete (no model field missing from form/display).
 
 Fix any issues inline. No need to re-review - just fix and move on.
 

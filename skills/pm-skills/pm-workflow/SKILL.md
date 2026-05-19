@@ -34,7 +34,13 @@ description: PM 工作流 - 从知识摄入到需求分析到 PRD，可选原型
 - 识别知识缺口
 - 输出知识摘要，作为 pm-brainstorming 的输入
 
-**特殊情况**：如果用户有多份PRD/需求文档需要合并，调用 prd-reconcile skill 执行冲突分析和合并。
+**多文档消歧检测**（ingest 完成后自动执行）：
+1. 扫描 `.pm-wiki/requirements/` 和 `.pm-wiki/context/` 中的所有页面
+2. 检查 frontmatter 的 `source` 字段，识别来源不同的需求/PRD 类文档
+3. 如果发现 ≥2 个不同来源的需求类文档 → 向用户提示：
+   > "检测到多份需求文档（来源：A文档、B文档...），可能存在跨文档冲突或信息遗漏。是否需要执行 `/prd-reconcile` 进行消歧比对？"
+4. 用户确认 → 调用 prd-reconcile skill
+5. 用户拒绝 → 记录到 `log.md`，标注"多文档未消歧"，后续 skill 遇到矛盾时可追溯
 
 ### 阶段 1: 需求探索 (pm-brainstorming)
 
