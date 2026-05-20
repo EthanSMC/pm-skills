@@ -1,12 +1,12 @@
 {
   "name": "pm-skills",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "产品经理完整工作流 Skills Plugin — 从知识摄入到需求探索到 PRD 撰写，可选原型验证",
   "author": {
     "name": "shenmingchong"
   },
-  "homepage": "https://github.com/shenmingchong/PM_skills",
-  "repository": "https://github.com/shenmingchong/PM_skills",
+  "homepage": "https://github.com/EthanSMC/pm-skills",
+  "repository": "https://github.com/EthanSMC/pm-skills",
   "license": "MIT",
   "keywords": [
     "pm",
