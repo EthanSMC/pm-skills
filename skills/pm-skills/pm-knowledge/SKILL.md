@@ -22,6 +22,27 @@ npm install -g mineru-document-explorer
 qmd --version
 ```
 
+PDF/DOCX/PPTX 处理需要 Python 3.10+ 和依赖包：
+
+```bash
+# 检查 Python 版本
+python3 --version   # macOS/Linux
+python --version    # Windows
+
+# 安装依赖
+pip install pymupdf python-docx python-pptx
+
+# 验证
+python3 -c "import pymupdf; import docx; import pptx; print('All dependencies OK')"
+```
+
+Skill 自安装（安装到当前项目或全局）：
+
+```bash
+qmd skill install              # 安装到当前项目
+qmd skill install --global     # 全局安装
+```
+
 ### 初始化（首次使用或新项目中）
 
 每次在新项目中使用 pm-knowledge 前，执行以下初始化：
@@ -63,14 +84,34 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":
 }
 ```
 
+HTTP 模式（适用于 Cursor 等需要 HTTP MCP 的客户端）：
+
+```bash
+# 启动 HTTP 模式 daemon
+qmd mcp --http --daemon
+# MCP URL: http://localhost:8181/mcp
+```
+
+```json
+// .cursor/mcp.json
+{
+  "mcpServers": {
+    "qmd": {
+      "url": "http://localhost:8181/mcp"
+    }
+  }
+}
+```
+
 ### 降级策略
 
 当 MCP 不可用时，按以下优先级降级：
 
 | 可用性 | 使用方式 |
 |--------|---------|
-| MCP 连接正常 | 通过 MCP 工具调用（推荐） |
-| MCP 不可用，CLI 可用 | Bash 调用 `qmd query`、`qmd wiki` 等命令 |
+| MCP 连接正常 | 通过 MCP 工具调用（推荐，模型常驻内存 ~3GB，首次启动 ~5-15s） |
+| MCP 不可用，CLI 可用 | Bash 调用 `qmd query`、`qmd wiki` 等命令（每次重新加载模型 ~5-15s） |
+| 仅需 BM25 搜索 | `qmd search "关键词"` — 无需模型加载，即时返回 |
 | qmd 未安装 | 纯文件系统操作 — 直接读写 `.pm-wiki/` markdown 文件 |
 
 降级检测：在 skill 启动时执行 `qmd --version`，如果失败则标记为 "降级模式"，后续操作自动切换到文件系统方式。
@@ -256,15 +297,18 @@ PM 知识分两层存储，维度不同、职责不同：
 - MCP: `doc_elements(docid, types=["table", "figure"])`
 - CLI: `qmd doc-read` 配合 `doc_grep` 提取结构化内容
 
+需要单文档语义搜索时：
+- MCP: `doc_query(docid, query="语义描述", top_k=5)` — 在单个文档内做语义搜索，返回排序片段和地址
+- CLI: `qmd doc-query <docid> "语义描述"`
+
 #### Step 4: 按 PM Schema 分类整理 (doc_write)
 
 从文档中提取知识，按 PM 维度生成 wiki 页面内容，然后写入：
 
-**MCP 模式：** 调用 `doc_write(wiki=<collection>, path="<category>/<page>.md", content="<markdown_with_frontmatter>", source="<docid>")`
+**MCP 模式：** 调用 `doc_write(wiki=<collection>, path="<category>/<page>.md", content="<markdown_with_frontmatter>", title="<页面标题>", source="<docid>")`
 **CLI 模式：** `echo "<content>" | qmd wiki write <collection> <path> --source <docid>`
-# Windows PowerShell 用户请使用等效命令和引号语法，如 `Set-Content` 或 `${"<content>"}`，然后传递到 `qmd wiki write`
 
-页面内容必须符合 PM Wiki Schema（见下方），frontmatter 必须包含 `source`、`type`、`status`、`ingested`。
+`title` 参数可选，用于设置 wiki 页面标题。`source` 参数必选，用于溯源追踪和过期检测（`wiki_lint` 依赖此字段判断页面是否过时）。
 
 分类映射参考：
 | 文档内容 | 写入路径 |
@@ -345,23 +389,45 @@ PM 知识分两层存储，维度不同、职责不同：
 **检索流程：**
 
 #### 模式 A：MCP 可用
-1. `query(text, intent="<context>", minScore=0.5)` — 混合搜索（BM25 + vector + rerank）
-2. 精确需求时可用高级模式：`query(searches=[{type:"lex", query:"关键词"}, {type:"vec", query:"语义"}])`
-3. 找到相关文档后，`get(docid_or_path)` 读取全文
-4. 大型文档走深读：`doc_toc(docid)` → `doc_read(docid, [addresses])`
-5. 按优先级路由：项目库 → 全局库
+1. `query(query="搜索词", intent="<context>", minScore=0.5)` — 混合搜索（BM25 + vector + rerank）
+   - `intent` 参数用于消歧：当查询词有多种含义时（如"挂起"可能是状态也可能是操作），传入上下文帮助系统选择正确语义
+   - `collections` 参数可限定搜索范围：`collections=["pm-project"]`
+2. 精确需求时可用高级模式：`query(searches=[{type:"lex", query:"关键词"}, {type:"vec", query:"语义"}, {type:"hyde", query:"假设性回答50-100字"}])`
+   - `lex`：BM25 精确关键词匹配
+   - `vec`：向量语义搜索，适合自然语言描述
+   - `hyde`：假设性文档嵌入，先生成假设性答案再搜索，适合抽象问题
+   - 第一个子查询权重 2x
+3. 找到相关文档后，获取内容：
+   - `get(file)` — 读取单个文件全文，支持路径、docid 或路径:行号
+     - 参数：`fromLine`（起始行）、`maxLines`（最大行数）、`lineNumbers`（显示行号）
+     - 返回头部有 `Total lines:`，超过 100 行时应改用 `doc_toc` + `doc_read`
+   - `multi_get(pattern)` — 批量获取多个文件，支持 glob 或逗号分隔路径
+     - 示例：`multi_get(pattern="requirements/*.md")`、`multi_get(pattern="readme.md, context/背景.md")`
+     - 参数：`maxBytes`（默认 10240）、`maxLines`
+4. 大型文档走深读：
+   - `doc_toc(file)` → 获取章节地址 → `doc_read(file, addresses)` 读取指定章节
+   - `doc_query(file, query="语义", top_k=5)` — 单文档内语义搜索，返回排序片段+地址
+   - `doc_grep(file, pattern="关键词", flags="gi")` — 单文档内关键词/正则搜索
+   - `doc_elements(file, element_types=["table", "figure"])` — 提取表格/图表/公式
+   - `doc_links(file, direction="both")` — 发现文档内/间链接（wikilink、markdown link、URL）
+5. 索引状态检查：`status()` — 返回文档数量、嵌入状态、collection 列表
+6. 按优先级路由：项目库 → 全局库
 
 #### 模式 B：CLI 可用（MCP 不可用时）
 1. 解析用户意图，提取关键词和概念
-2. 执行 `qmd query "<query>" -n 5` — 混合检索（BM25 + vector + rerank）
-3. 如果需要更精确：`qmd query $'lex: <关键词>\nvec: <语义>' -n 5`  # bash
+2. 混合检索：`qmd query "<query>" -n 5`（BM25 + vector + rerank）
+3. BM25 快速检索（无需模型加载，即时返回）：`qmd search "关键词"`
+4. 如果需要更精确：`qmd query $'lex: <关键词>\nvec: <语义>' -n 5`  # bash
 # Windows PowerShell 用户请使用等效换行字符串或多行引号语法
-4. 按优先级路由：项目库 → 全局库
-5. 如果 wiki 知识不足以回答，回源到原始文档：
+5. 批量获取：`qmd multi-get "requirements/*.md" -l 40` 或 `qmd multi-get "a.md, b.md"`
+6. 按优先级路由：项目库 → 全局库
+7. 如果 wiki 知识不足以回答，回源到原始文档：
    - `qmd doc-toc <docid>` 获取文档结构（PDF 显示 pages，MD 显示 headings）
    - `qmd doc-read <docid> <addr>` 读取具体章节
    - `qmd doc-grep <docid> <pattern>` 在文档内搜索关键词
-6. 综合结果，附上来源引用返回
+   - `qmd doc-query <docid> <语义查询>` 单文档语义搜索
+8. 查看索引状态：`qmd status`
+9. 综合结果，附上来源引用返回
 
 #### 模式 C：纯文件系统（qmd 不可用时）
 1. 使用 Grep/Glob 工具在 `.pm-wiki/` 目录中搜索
@@ -431,13 +497,19 @@ Query 不只是检索，好的回答本身就是新知识。以下场景的 quer
 
 **MCP/CLI 可用时：**
 1. MCP: `wiki_lint()` / CLI: `qmd wiki lint` — 检查 wiki 结构健康
+   - 参数：`collection`（限定检查范围）、`stale_days`（默认 30，标记超时页面）
 2. PM 维度额外检查：
    - 孤儿页面（没有被引用的知识页）
    - 过时数据（超过时效的事实性内容）
    - 未处理的待审内容
    - 跨库引用是否有效
-3. `wiki_log()` / `qmd wiki log` — 查看最近的操作日志
-4. 建议新的摄入方向（基于已有知识缺口）
+3. `wiki_log(since="2026-01-01", operation="ingest", limit=20, format="markdown")` — 查看操作日志
+   - `operation` 过滤：ingest / update / lint / query / index
+   - `format`：markdown 或 json
+4. `wiki_index(collection="pm-project", write=true)` — 生成/更新 wiki 索引页
+   - `write=true` 时将索引写入 `index.md` 到磁盘
+   - 适用于 wiki 页面超过 20 个时的全局导航
+5. 建议新的摄入方向（基于已有知识缺口）
 
 **文件系统降级（qmd 不可用时）：**
 1. 检查 `.pm-wiki/` 下是否存在 `[待审]` 标记的页面
