@@ -6,20 +6,20 @@
 <title>金石（FinPM）· 决策驱动的 PRD 形成系统 — 立项书</title>
 <style>
   :root {
-    --ink: #1c1917;
-    --ink-soft: #44403c;
-    --ink-mute: #78716c;
-    --gold: #b45309;
-    --gold-bright: #d97706;
-    --gold-pale: #fef3c7;
-    --paper: #fafaf9;
+    --ink: #0D1B3E;
+    --ink-soft: #475569;
+    --ink-mute: #94A3B8;
+    --gold: #0343E0;
+    --gold-bright: #1565C0;
+    --gold-pale: #E9EEF7;
+    --paper: #F7F9FC;
     --card: #ffffff;
-    --line: #e7e5e4;
-    --term-bg: #1c1917;
-    --term-fg: #e7e5e4;
-    --term-dim: #a8a29e;
-    --term-gold: #fbbf24;
-    --ok: #15803d;
+    --line: #D1D9E6;
+    --term-bg: #0D1B3E;
+    --term-fg: #E9EEF7;
+    --term-dim: #94A3B8;
+    --term-gold: #38BDF8;
+    --ok: #4EA72E;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -34,7 +34,7 @@
 
   /* ===== Hero ===== */
   header.hero {
-    background: linear-gradient(160deg, #1c1917 0%, #292524 60%, #3b2f1e 100%);
+    background: linear-gradient(160deg, #0D1B3E 0%, #13294F 55%, #0A2E52 100%);
     color: #fafaf9;
     padding: 72px 0 56px;
     position: relative;
@@ -45,13 +45,13 @@
     position: absolute;
     right: -20px; bottom: -60px;
     font-size: 260px; font-weight: 900;
-    color: rgba(251,191,36,.06);
+    color: rgba(56,189,248,.07);
     line-height: 1;
     pointer-events: none;
   }
   .hero .tag {
     display: inline-block;
-    border: 1px solid rgba(251,191,36,.5);
+    border: 1px solid rgba(56,189,248,.5);
     color: var(--term-gold);
     font-size: 13px; letter-spacing: 2px;
     padding: 3px 14px; border-radius: 999px;
@@ -60,7 +60,7 @@
   .hero h1 { font-size: 40px; font-weight: 800; letter-spacing: 1px; line-height: 1.3; }
   .hero h1 .accent { color: var(--term-gold); }
   .hero p.sub { margin-top: 14px; font-size: 17px; color: #d6d3d1; max-width: 640px; }
-  .hero p.motto { margin-top: 8px; font-size: 14px; color: #a8a29e; letter-spacing: 3px; }
+  .hero p.motto { margin-top: 8px; font-size: 14px; color: #94A3B8; letter-spacing: 3px; }
   .hero .stats { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 34px; }
   .hero .stat {
     background: rgba(255,255,255,.06);
@@ -203,7 +203,7 @@
 
   footer {
     margin-top: 64px; padding: 30px 0 40px;
-    background: var(--ink); color: #a8a29e;
+    background: var(--ink); color: #94A3B8;
     font-size: 13px; text-align: center; letter-spacing: 1px;
   }
   footer b { color: var(--term-gold); }
@@ -492,12 +492,12 @@
     <tr><th>环节</th><th>阶段</th><th>耗时</th><th>AI 可介入度</th></tr>
     <tr><td>信息 / 知识收集</td><td>前置</td><td>高</td><td>高（金融可信度是坑）</td></tr>
     <tr><td>需求来源消化</td><td>前置</td><td>中</td><td>中</td></tr>
-    <tr><td>跨部门预对齐</td><td>前置</td><td><b style="color:#b45309">极高</b></td><td><b>低（人际）</b></td></tr>
+    <tr><td>跨部门预对齐</td><td>前置</td><td><b style="color:#E97132">极高</b></td><td><b style="color:#E97132">低（人际）</b></td></tr>
     <tr><td>方案探索与决策</td><td>前置</td><td>高</td><td>中</td></tr>
-    <tr><td>PRD 初稿撰写</td><td>写作</td><td><b style="color:#15803d">低</b></td><td>高</td></tr>
-    <tr><td>评审挑刺</td><td>后置</td><td>高</td><td><b style="color:#15803d">高</b></td></tr>
+    <tr><td>PRD 初稿撰写</td><td>写作</td><td><b style="color:#4EA72E">低</b></td><td>高</td></tr>
+    <tr><td>评审挑刺</td><td>后置</td><td>高</td><td><b style="color:#4EA72E">高</b></td></tr>
     <tr><td>修订循环</td><td>后置</td><td>高</td><td>高</td></tr>
-    <tr><td>宣讲对齐 / 拿批准</td><td>后置</td><td>中</td><td><b>低（人际）</b></td></tr>
+    <tr><td>宣讲对齐 / 拿批准</td><td>后置</td><td>中</td><td><b style="color:#E97132">低（人际）</b></td></tr>
     <tr><td>开发期维护</td><td>后置</td><td>中</td><td>中</td></tr>
   </table></div>
   <div class="callout"><b>天花板声明</b>本系统压缩的是"一个 PM 能独立完成的思考与验证时间"，<strong>不解决"组织协调时间"</strong>。跨部门对齐、宣讲拿批准等环节耗时虽高，但本质是人际博弈，AI 替代不了，明确排除在范围外。</div>
