@@ -223,14 +223,14 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="tag">立项书 · v4 · 2026-06</div>
+    <div class="tag">立项书 · v5 · 国智技术 · 2026-06</div>
     <h1>金石 <span class="accent">FinPM</span><br>决策驱动的 PRD 形成系统</h1>
     <p class="sub">AI 管理文档的形成过程，而不是替人写文档——通过多轮追问、挑刺、审批，引导金融科技 PM 完成所有设计决策，PRD 由已批准决策汇编而成。</p>
     <p class="motto">金，金融 ｜ 石，证据 ｜ 言之有据，金石为证</p>
     <div class="stats">
       <div class="stat"><b>4</b><span>环节 · 收口在 PRD</span></div>
       <div class="stat"><b>4</b><span>AI 角色一一对应</span></div>
-      <div class="stat"><b>2</b><span>里程碑 · 插件→产品</span></div>
+      <div class="stat"><b>3</b><span>里程碑 · 目标1→2→3</span></div>
       <div class="stat"><b>~50 人天</b><span>推荐配置总投入</span></div>
     </div>
   </div>
@@ -510,34 +510,43 @@
     <div class="card"><h4><span class="idx">租</span>harness 底层 · commodity</h4><p>LLM 调用、工具执行、对话循环、上下文管理、子 agent 隔离。无差异化价值，整体借用 Claude Code。</p></div>
   </div>
   <p><strong>harness-agnostic 纪律</strong>：编排层尽量表达为"数据 + 规则"（台账 = markdown、量规 = 清单、流程 = 状态机、资产 = 文档），平台耦合只留薄薄一层调用胶水——这让编排层跨 harness 可迁移，与「以产物为中心」理念同源，是可迁移性的保险。</p>
-  <div class="callout"><b>毕业触发条件（插件 → 独立产品）</b>当且仅当出现 harness 能力缺口——多人协作 / 持久化状态与版本 / 外部系统打通（监管库、Jira、审批流），或为实现某编排逻辑被迫 hack 平台——才自建底座。在此之前，自造基础设施的冲动一律由防膨胀条款挡回。</div>
+  <div class="callout"><b>毕业触发条件（Claude Code 插件 → 接入 GZCLaw 自有底座、独立产品）</b>当且仅当目标2 小范围验证有效，且出现 harness 能力缺口——多人协作 / 持久化状态与版本 / 外部系统打通（监管库、Jira、审批流），或为实现某编排逻辑被迫 hack 平台——才替换底座、形成独立模块。在此之前，自造基础设施的冲动一律由防膨胀条款挡回。</div>
 
-  <h3><span class="h3num">5.3</span>两个里程碑</h3>
+  <h3><span class="h3num">5.3</span>三个里程碑（对齐国智立项三目标）</h3>
   <div class="tblwrap"><table class="tbl">
-    <tr><th></th><th>里程碑一 · 插件</th><th>里程碑二 · 独立产品</th></tr>
-    <tr><td><b>形态</b></td><td>完整四环节编排层，寄生 Claude Code</td><td>自建 harness，编排层平迁</td></tr>
-    <tr><td><b>交付</b></td><td>端到端产出 PRD（按指定模版）</td><td>多人 / 持久化 / 外部集成</td></tr>
-    <tr><td><b>触发</b></td><td>立即启动</td><td>满足毕业条件后</td></tr>
+    <tr><th></th><th>里程碑一 · 目标1</th><th>里程碑二 · 目标2</th><th>里程碑三 · 目标3</th></tr>
+    <tr><td><b>命题</b></td><td>AI 各环节提效工具</td><td>串联完整工作流 + 小范围验证</td><td>接入 GZCLaw 底座、独立产品</td></tr>
+    <tr><td><b>形态</b></td><td>Claude Code Plugin</td><td>四环节端到端打通（仍 Plugin）</td><td>替换 Agent 底座为 GZCLaw 自有，独立模块</td></tr>
+    <tr><td><b>交付</b></td><td>各环节提效 skill，降低 PRD 撰写负担</td><td>跑通流水线 + 产物人/AI 可读无歧义 + 验证结论</td><td>公司级标准 PRD 工作产品，规模化提效</td></tr>
+    <tr><td><b>触发</b></td><td>立即启动</td><td>目标1 成果就绪</td><td>目标2 验证有效 + 毕业条件</td></tr>
   </table></div>
 
   <div class="phase">
-    <div class="ribbon"><b>里程碑一</b><span>插件 · ~14周</span></div>
+    <div class="ribbon"><b>里程碑一</b><span>目标1 · Plugin</span></div>
     <div class="body">
-      <h4>完整四环节，端到端产出 PRD</h4>
-      <p>只做编排层、跑通四环节：研究员（知识收集）→ 主持人（脑暴 + 台账 + 草图）→ 质询者（挑刺审批）→ 书记员（按指定模版汇编 PRD）。内部开发顺序：先打通<strong>心脏</strong>（脑暴 + 挑刺），再补<strong>两头</strong>（研究 + 汇编），最后<strong>打磨</strong>（生命周期、失效检测）。</p>
-      <div class="q"><b>核心研究问题：</b>① "被问出来的 PRD" 是否在决策质量上可度量地优于"被生成的 PRD"？（挑刺改选率、辩护测试）② 证据链能否压住监管条文幻觉？（引用抽查通过率）③ 单决策耗时是否可接受？</div>
+      <h4>探索 AI 完成需求文档工作提效</h4>
+      <p>以 Claude Code Plugin 形式建设四环节的 AI 提效能力（研究员 / 主持人 / 质询者 / 书记员），先把单环节能力做出来，减少 PM 的 PRD 撰写负担。</p>
     </div>
   </div>
 
   <div class="phase">
-    <div class="ribbon"><b>里程碑二</b><span>产品 · 待定</span></div>
+    <div class="ribbon"><b>里程碑二</b><span>目标2 · 验证</span></div>
     <div class="body">
-      <h4>换底座，编排层平迁</h4>
-      <p>在一期跑出真实决策数据、领域资产成型、且毕业条件触发后再启动；其形态与排期待一期结论出来后另行规划，不在本立项书细化。</p>
+      <h4>串联完整工作流，小范围验证</h4>
+      <p>把各环节串成端到端工作流，整合并根据实际反馈调整设计方案、优化产出；硬指标是<strong>交付物能被人和 AI 准确阅读、无重大歧义</strong>——直接对应国智"减少 PRD 逻辑疏忽与边界模糊、降低产品与开发摩擦成本"的痛点。拿 1–2 个真实资产类需求（如交易簿记 / 风险计量场景）小范围验证。</p>
+      <div class="q"><b>贯穿目标1–2 的核心研究问题：</b>① "被问出来的 PRD" 是否在决策质量上可度量地优于"被生成的 PRD"？（挑刺改选率、辩护测试）② 证据链能否压住监管条文幻觉？（引用抽查通过率）③ 单决策耗时是否可接受？</div>
     </div>
   </div>
 
-  <p style="font-size:14px;color:var(--ink-mute)">具体落地实现（skill 划分、台账格式、文件结构、角色隔离机制）见配套文档<strong>《一期实现说明》</strong>，本立项书只保留策略与里程碑层面。</p>
+  <div class="phase">
+    <div class="ribbon"><b>里程碑三</b><span>目标3 · GZCLaw</span></div>
+    <div class="body">
+      <h4>接入 GZCLaw 底座，构建标准 PRD 工作产品</h4>
+      <p>目标2 验证有效后，把 Agent 底座从 Claude Code 替换为国智自有的 <strong>GZCLaw</strong> 底座（编排层平迁，正是 harness-agnostic 纪律的兑现），形成独立模块，规模化提升公司整体 PM 效率。形态与排期待目标2结论后另行规划，不在本立项书细化。</p>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--ink-mute)">具体落地实现（skill 划分、台账格式、文件结构、角色隔离机制）见配套文档<strong>《一期实现说明》</strong>——覆盖目标1 + 2 的 Claude Code Plugin 阶段；本立项书只保留策略与里程碑层面。</p>
   <hr class="sep">
 </section>
 
@@ -608,7 +617,7 @@
     <div class="card"><h4><span class="idx">A</span>最小配置：1 人 + AI（可行底线）</h4><p>负责人兼任全部角色，总投入约 <b>40–45 人天</b>。代价：盲评和辩护测试"自己测自己"会失真。补救底线：外借 1 名 PM 做盲评 + 1 名合规同事抽查证据链，合计 ≤ 1.5 人天。</p></div>
     <div class="card"><h4><span class="idx">B</span>推荐配置：1 + 0.3 + 顾问（性价比最优）</h4><p>负责人 0.5 FTE + skill 工程兼职（前两个迭代每周 1–2 天）+ 合规顾问按次 + 外评池。总投入约 <b>50–55 人天</b>。多出的约 10 人天换来量规质量和实验可信度——研究结论能否立住的根基，全项目杠杆最高的投入。</p></div>
   </div>
-  <p style="font-size:14px;color:var(--ink-mute)">以下估算针对<strong>里程碑一（插件、完整四环节、约 14 周）</strong>；里程碑二待一期结论后另算。"迭代 1/2/3"是里程碑一内部的开发顺序，不是独立里程碑。</p>
+  <p style="font-size:14px;color:var(--ink-mute)">以下估算针对<strong>目标1 + 2 的 Claude Code Plugin 阶段（约 14 周）</strong>；目标3（接入 GZCLaw 底座、独立产品）待验证有效后另算。"迭代 1/2/3"是 Plugin 阶段内部的开发顺序，不是独立里程碑。</p>
 
   <h3><span class="h3num">9.3</span>里程碑一人时估算（推荐配置，内部三迭代）</h3>
   <div class="tblwrap"><table class="tbl">
