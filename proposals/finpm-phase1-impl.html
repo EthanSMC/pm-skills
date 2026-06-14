@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金石 FinPM · 一期实现说明（完整四环节插件）</title>
+<style>
+  :root {
+    --ink: #1c1917; --ink-soft: #44403c; --ink-mute: #78716c;
+    --gold: #b45309; --gold-bright: #d97706; --gold-pale: #fef3c7;
+    --paper: #fafaf9; --card: #ffffff; --line: #e7e5e4;
+    --term-bg: #1c1917; --term-fg: #e7e5e4; --term-dim: #a8a29e; --term-gold: #fbbf24;
+    --blue: #1d4ed8; --ok: #15803d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif; background: var(--paper); color: var(--ink); line-height: 1.85; font-size: 16px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 28px; }
+
+  header.hero { background: linear-gradient(160deg,#1c1917 0%,#292524 55%,#1e293b 100%); color: #fafaf9; padding: 60px 0 48px; position: relative; overflow: hidden; }
+  header.hero::after { content: "实现"; position: absolute; right: -10px; bottom: -50px; font-size: 220px; font-weight: 900; color: rgba(251,191,36,.06); line-height: 1; }
+  .hero .tag { display: inline-block; border: 1px solid rgba(251,191,36,.5); color: var(--term-gold); font-size: 13px; letter-spacing: 2px; padding: 3px 14px; border-radius: 999px; margin-bottom: 18px; }
+  .hero h1 { font-size: 34px; font-weight: 800; letter-spacing: 1px; line-height: 1.35; }
+  .hero h1 .accent { color: var(--term-gold); }
+  .hero p.sub { margin-top: 14px; font-size: 16px; color: #d6d3d1; max-width: 640px; }
+  .hero .crumb { margin-top: 16px; font-size: 13px; color: #a8a29e; }
+  .hero .crumb a { color: var(--term-gold); text-decoration: none; }
+
+  nav.toc { position: sticky; top: 0; z-index: 50; background: rgba(250,250,249,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  nav.toc .wrap { display: flex; gap: 4px; overflow-x: auto; }
+  nav.toc a { flex-shrink: 0; font-size: 13px; color: var(--ink-mute); text-decoration: none; padding: 12px 11px; border-bottom: 2px solid transparent; white-space: nowrap; }
+  nav.toc a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+  section { padding: 46px 0 6px; }
+  .secnum { font-size: 13px; font-weight: 700; color: var(--gold); letter-spacing: 3px; }
+  h2 { font-size: 25px; font-weight: 800; margin: 6px 0 18px; }
+  h3 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; }
+  h3 .h3num { color: var(--gold); margin-right: 8px; font-weight: 800; }
+  p { margin: 12px 0; color: var(--ink-soft); }
+  strong { color: var(--ink); }
+  .gold { color: var(--gold); font-weight: 700; }
+
+  .callout { background: var(--gold-pale); border-left: 4px solid var(--gold-bright); border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 20px 0; font-size: 15.5px; }
+  .callout b { display: block; margin-bottom: 5px; }
+
+  .tbl { width: 100%; border-collapse: collapse; margin: 16px 0; background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 14px; }
+  .tbl th { background: var(--ink); color: #fafaf9; text-align: left; padding: 10px 14px; font-weight: 600; font-size: 13px; }
+  .tbl td { padding: 11px 14px; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-soft); }
+  .tbl td b, .tbl td strong { color: var(--ink); }
+  .tbl tr:nth-child(even) td { background: #fafaf8; }
+  .tblwrap { overflow-x: auto; }
+  code.inline { background: #f5f5f4; border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; font-family: "SF Mono",Menlo,Consolas,monospace; font-size: 13px; color: var(--gold); }
+
+  pre.code { background: var(--term-bg); color: var(--term-fg); border-radius: 12px; padding: 18px 20px; overflow-x: auto; font-family: "SF Mono","JetBrains Mono",Menlo,Consolas,"Noto Sans Mono CJK SC",monospace; font-size: 12.5px; line-height: 1.7; margin: 16px 0; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+  pre.code .c { color: var(--term-dim); }
+  pre.code .k { color: var(--term-gold); }
+  pre.code .g { color: #86efac; }
+  pre.code .b { color: #93c5fd; }
+
+  .pipeline { display: flex; align-items: stretch; gap: 0; margin: 22px 0; flex-wrap: wrap; }
+  .pnode { flex: 1; min-width: 130px; background: var(--card); border: 1.5px solid var(--line); border-top: 4px solid var(--gold-bright); border-radius: 12px; padding: 14px 12px; text-align: center; }
+  .pnode .n { font-size: 11px; color: var(--gold); font-weight: 800; letter-spacing: 1px; }
+  .pnode .t { font-size: 15px; font-weight: 800; margin: 3px 0; }
+  .pnode .o { font-size: 11.5px; color: var(--ink-mute); margin-top: 6px; border-top: 1px dashed var(--line); padding-top: 6px; }
+  .parrow { display: flex; align-items: center; padding: 0 5px; color: var(--gold-bright); font-weight: 700; font-size: 16px; }
+
+  ul.plain { margin: 12px 0 12px 2px; list-style: none; }
+  ul.plain li { padding-left: 22px; position: relative; margin: 7px 0; color: var(--ink-soft); }
+  ul.plain li::before { content: "◆"; position: absolute; left: 0; color: var(--gold-bright); font-size: 10px; top: 6px; }
+  ul.check { margin: 12px 0; list-style: none; }
+  ul.check li { padding: 9px 14px 9px 38px; position: relative; margin: 8px 0; background: var(--card); border: 1px solid var(--line); border-radius: 9px; font-size: 14.5px; color: var(--ink-soft); }
+  ul.check li::before { content: "☐"; position: absolute; left: 14px; top: 8px; color: var(--gold-bright); font-weight: 800; }
+
+  footer { margin-top: 56px; padding: 28px 0 38px; background: var(--ink); color: #a8a29e; font-size: 13px; text-align: center; }
+  footer b { color: var(--term-gold); }
+  hr.sep { border: none; border-top: 1px solid var(--line); margin: 40px 0 0; }
+  @media (max-width: 640px) { .hero h1 { font-size: 25px; } .pipeline { flex-direction: column; } .parrow { transform: rotate(90deg); justify-content: center; padding: 2px 0; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="tag">实现草案 · v1 · 2026-06</div>
+    <h1>金石 <span class="accent">FinPM</span> · 一期实现说明<br>完整四环节插件</h1>
+    <p class="sub">只讲"怎么做"——skill 划分、台账格式、文件结构、角色隔离。全部以 Claude Code 插件形态实现，端到端产出 PRD。</p>
+    <p class="crumb">配套《立项书：金石 FinPM》v4（讲"为什么做"） ｜ 守 harness-agnostic 纪律：数据 + 规则，平台耦合只留薄胶水</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#s1">1 范围</a>
+    <a href="#s2">2 文件结构</a>
+    <a href="#s3">3 skill 契约</a>
+    <a href="#s4">4 决策清单</a>
+    <a href="#s5">5 台账格式</a>
+    <a href="#s6">6 角色隔离</a>
+    <a href="#s7">7 PRD 模版</a>
+    <a href="#s8">8 证据链</a>
+    <a href="#s9">9 开发顺序</a>
+    <a href="#s10">10 自检清单</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="s1">
+  <div class="secnum">01</div>
+  <h2>一期范围</h2>
+  <p>里程碑一 = <strong>完整四环节编排层</strong>，全部以 Claude Code 插件（skill）形态实现，端到端产出 PRD：</p>
+  <div class="pipeline">
+    <div class="pnode"><div class="n">环节1</div><div class="t">研究员</div><div class="o">brief + sources</div></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><div class="n">环节2</div><div class="t">主持人</div><div class="o">台账(初选) + 草图</div></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><div class="n">环节3</div><div class="t">质询者</div><div class="o">台账(已批准)</div></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><div class="n">环节4</div><div class="t">书记员</div><div class="o">PRD</div></div>
+  </div>
+  <ul class="plain">
+    <li>不自建 agent harness（LLM 调用、工具、上下文、子 agent 隔离全部用 Claude Code 现成的）</li>
+    <li>编排层守 harness-agnostic 纪律：表达为"数据 + 规则"，平台耦合只留薄胶水</li>
+    <li>产出的 PRD <strong>按指定模版</strong>走（团队/公司现成模版，不另造）</li>
+  </ul>
+  <hr class="sep">
+</section>
+
+<section id="s2">
+  <div class="secnum">02</div>
+  <h2>文件结构</h2>
+  <pre class="code"><span class="k">assets/</span>                       <span class="c"># 规则 / 资产层（领域 IP，平台无关）</span>
+  decision-list.md            <span class="c"># 决策清单：依赖排序的决策点 + 域标签</span>
+  challenge-rubric.md         <span class="c"># 四视角挑刺量规</span>
+  prd-template.md             <span class="c"># 指定 PRD 模版 + 决策→章节映射规则</span>
+<span class="k">skills/</span>                       <span class="c"># 编排层（薄胶水，挂在 Claude Code 上）</span>
+  fin-research/SKILL.md       <span class="c"># 研究员（环节1）</span>
+  fin-brainstorm/SKILL.md     <span class="c"># 主持人（环节2）</span>
+  fin-challenge/SKILL.md      <span class="c"># 质询者（环节3，subagent 隔离）</span>
+  fin-compile/SKILL.md        <span class="c"># 书记员（环节4）</span>
+<span class="k">work/&lt;需求名&gt;/</span>                <span class="c"># 工作产物（每个需求一个目录）</span>
+  <span class="b">sources/</span>                    <span class="c"># 原始材料库，一源一文件</span>
+    reg-2026-001.md           <span class="c">#   含 URL + 抓取日期 + 原文摘录</span>
+    competitor-A.md
+    user-feedback-Q2.md
+  brief.md                    <span class="c"># 结构化简报（消化后，每条 → sources 引用）</span>
+  ledger.md                   <span class="c"># 决策台账 ← 系统中心</span>
+  design-draft.md             <span class="c"># 设计思路稿</span>
+  sketches.md                 <span class="c"># ASCII 交互草图</span>
+  challenge-log.md            <span class="c"># 挑刺记录</span>
+  prd.md                      <span class="c"># 最终 PRD（按指定模版）</span></pre>
+  <p><code class="inline">assets/</code> 是跨需求复用的领域资产；<code class="inline">work/&lt;需求名&gt;/</code> 是单个需求的全部产物。两者都是纯文件系统——二期独立产品换成数据库/对象存储时，逻辑结构照搬。</p>
+  <hr class="sep">
+</section>
+
+<section id="s3">
+  <div class="secnum">03</div>
+  <h2>四个 skill 的输入输出契约</h2>
+  <p>每个 skill = 一个角色，<strong>人显式调用、不自动编排</strong>。契约用"只读哪些文件、写哪些文件"表达，这就是 harness-agnostic 的规格——二期换 runtime，契约不变。</p>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>skill</th><th>角色</th><th>只读</th><th>产出</th><th>关键约束</th></tr>
+    <tr><td><code class="inline">fin-research</code></td><td>研究员</td><td>需求描述、信源清单</td><td>sources/*、brief.md</td><td>边抓边落盘到 sources（防上下文爆）；brief 每条带引用；不下产品结论</td></tr>
+    <tr><td><code class="inline">fin-brainstorm</code></td><td>主持人</td><td>brief.md、decision-list.md</td><td>ledger(初选)、design-draft、sketches</td><td>六步对话；只提问呈现不替人选；每屏带引用或"推测"标注</td></tr>
+    <tr><td><code class="inline">fin-challenge</code></td><td>质询者</td><td>ledger、sketches、brief、rubric</td><td>ledger(已批准)、challenge-log</td><td><b>subagent 隔离</b>：全新上下文，读不到脑暴对话；只攻击决策结果；审批回到人</td></tr>
+    <tr><td><code class="inline">fin-compile</code></td><td>书记员</td><td>ledger(已批准)、prd-template</td><td>prd.md</td><td>只汇编不创作；按映射填模版；台账与 PRD 漂移时报告而非擅改</td></tr>
+  </table></div>
+  <hr class="sep">
+</section>
+
+<section id="s4">
+  <div class="secnum">04</div>
+  <h2>决策清单（decision-list.md）结构</h2>
+  <div class="callout"><b>不用域做主结构 —— 域只用作标签</b>骨架是<strong>依赖排序的决策点流</strong>。真正决定顺序的是依赖（D-01 → D-03），不是域；很多决策跨域，硬分区会丢信息。</div>
+  <pre class="code"><span class="k">## D-01 业务定性与牌照路径</span>
+- 域: [合规]
+- 核心: 是
+- 依赖: —
+- 追问提纲: 本业务是否触及放贷/支付/征信牌照？挂靠还是自营？...
+- 常见候选: A 助贷(不碰放贷牌照) / B 自营(需牌照) / C 联合贷
+
+<span class="k">## D-03 资金方模式</span>
+- 域: [资金, 合规]          <span class="c"># 跨域 → 多标签</span>
+- 核心: 是
+- 依赖: D-01               <span class="c"># 必须先定 D-01</span>
+- 追问提纲: 单一资金方还是联合贷？出资比例？...
+- 常见候选: A 单一持牌机构 / B 联合贷 / C 自有资金</pre>
+  <ul class="plain">
+    <li><strong>依赖</strong>字段决定主持人逐项初选的顺序（拓扑序），不是按域分组</li>
+    <li><strong>域</strong>是可多值标签，只服务两件事：完整性扫描（每个监管面是否覆盖）、挑刺视角路由（合规视角 ↔ 带"合规"标签的决策）</li>
+    <li>"按域分组展示" 只是主持人收敛时的一个视图，不是底层结构</li>
+    <li>一期 v1 先覆盖 <strong>合规路径 + 资金流</strong> 两个面（约 8–12 个决策点），后续迭代补全</li>
+  </ul>
+  <hr class="sep">
+</section>
+
+<section id="s5">
+  <div class="secnum">05</div>
+  <h2>决策台账（ledger.md）格式</h2>
+  <p>人类可读的结构化 markdown，每个决策一个块；文件头放进度计数。</p>
+  <pre class="code"><span class="k"># 决策台账 · &lt;需求名&gt;</span>
+进度: 已批准 6 / 已决待审 2 / 暂缓 1 / 讨论中 1
+
+<span class="k">## D-04 资金托管方式</span>
+- 状态: <span class="g">已批准</span>          <span class="c"># 讨论中 / 已决待审 / 已批准 / 暂缓 / 已失效</span>
+- 域: [资金, 合规]
+- 候选: A 银行存管 / B 持牌支付备付金
+- 选择: A
+- 理由: 立项期合规稳定优先
+- 证据: brief.md §1.5 → sources/reg-2026-001.md
+- 挑刺记录: 质询者质疑对账时效 → 人维持 A，补充对账方案（见 challenge-log #3）
+- 审批: 2026-06-14 人确认</pre>
+  <p>纯 markdown 的理由：人能直接改、git 能版本管理、二期产品能解析。一期不引入 YAML/数据库；若未来要机读，给状态字段套一段 yaml 即可，但非必要。</p>
+  <hr class="sep">
+</section>
+
+<section id="s6">
+  <div class="secnum">06</div>
+  <h2>角色隔离：subagent + 文件契约</h2>
+  <p>质询者必须读不到脑暴过程，否则会为主持人引导出的方案辩护。一期用 <strong>subagent 实现隔离</strong>：</p>
+  <ul class="plain">
+    <li>进入环节 3 时，<code class="inline">fin-challenge</code> 起一个 subagent，<strong>全新上下文</strong>，prompt 明确"你只能读 ledger / sketches / brief / rubric，不得读任何对话历史"</li>
+    <li>subagent 对每个"已决待审"决策跑：追问 → 四视角挑刺 → 给严重度和依据，写入 challenge-log.md</li>
+    <li><strong>审批不在 subagent</strong>：挑刺结果交回人，人修订或坚持，人显式确认才置"已批准"</li>
+  </ul>
+  <div class="callout"><b>机制 vs 规格</b>subagent 是一期的隔离机制（Claude Code 给真正的全新上下文）；可迁移的规格是那条<strong>只读文件契约</strong>（质询者输入 = {ledger, sketches, brief, rubric}）。二期独立产品用"自己的全新 LLM 调用"实现同一契约，机制随平台换、契约不变。</div>
+  <p>可选增强（一期可不做）：四视角各起一个独立 subagent 并行挑刺，互不软化。一期先单 subagent 顺序跑四视角即可。</p>
+  <hr class="sep">
+</section>
+
+<section id="s7">
+  <div class="secnum">07</div>
+  <h2>PRD 模版与映射（prd-template.md）</h2>
+  <ul class="plain">
+    <li>模版是<strong>指定的</strong>（团队现成 PRD 模版），书记员适配它，不另造一套结构</li>
+    <li>文档里维护一套 <strong>决策 → 章节映射规则</strong></li>
+  </ul>
+  <pre class="code">D-01 业务定性     → PRD §1 产品定位 / §6 合规依据
+D-02 营销合规     → PRD §6 合规依据 / §4 交互(年化明示)
+D-04 资金托管     → PRD §5 资金流 / §6 合规依据
+sketches.md       → PRD §4 交互与展示（ASCII 草图直接嵌入）</pre>
+  <p>书记员只把"已批准"决策按映射填进模版对应章节；未批准的决策不进 PRD（<strong>完整性门控</strong>）。</p>
+  <hr class="sep">
+</section>
+
+<section id="s8">
+  <div class="secnum">08</div>
+  <h2>证据链：三级物理可追溯</h2>
+  <div class="pipeline">
+    <div class="pnode"><div class="n">决策</div><div class="t">ledger.md</div><div class="o">D-04 选择 A</div></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><div class="n">论断</div><div class="t">brief.md</div><div class="o">§1.5 监管要求</div></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><div class="n">原文</div><div class="t">sources/xxx</div><div class="o">URL + 日期 + 原文</div></div>
+  </div>
+  <p>每一跳都是能打开的文件。抽查某条监管引用时，从台账一路点到 sources 原文，验证是否幻觉。<span class="gold">引用抽查通过率</span>是核心度量。</p>
+  <hr class="sep">
+</section>
+
+<section id="s9">
+  <div class="secnum">09</div>
+  <h2>一期内部开发顺序</h2>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>迭代</th><th>周</th><th>做什么</th><th>验证</th></tr>
+    <tr><td><b>迭代1 · 心脏</b></td><td>W1–5</td><td>主持人 + 质询者（环节2+3）+ 决策清单 v1（合规+资金）+ 台账格式；brief 先手工喂</td><td>决策质量：挑刺改选率、辩护测试</td></tr>
+    <tr><td><b>迭代2 · 两头</b></td><td>W6–9</td><td>研究员（环节1，产 sources+brief）+ 书记员（环节4，按模版汇编 PRD）；四环节首次成线</td><td>证据率；PRD 盲评（问出来 vs 生成）</td></tr>
+    <tr><td><b>迭代3 · 打磨</b></td><td>W10–13</td><td>决策清单补全；失效检测与回流；端到端跑真实需求</td><td>端到端耗时；失效拦截率</td></tr>
+  </table></div>
+  <p>迭代1 brief 手工喂是临时占位（研究员尚未做），不影响心脏环节的决策质量验证；迭代2 研究员上线后 brief 转自动产出。</p>
+  <hr class="sep">
+</section>
+
+<section id="s10">
+  <div class="secnum">10</div>
+  <h2>harness-agnostic 自检清单</h2>
+  <p>每加一个编排能力，过一遍：</p>
+  <ul class="check">
+    <li>它表达成"数据 + 规则"了吗？（清单/量规/台账/映射 = 文件，不是写死的 prompt 流程）</li>
+    <li>角色边界是"只读哪些文件"的契约，而不是依赖某个 Claude Code 专有机制？</li>
+    <li>换个 runtime，这套逻辑能照搬吗？</li>
+    <li>是不是为了实现它必须 hack Claude Code？—— 若是，记下来，这是<strong>毕业信号</strong>。</li>
+  </ul>
+</section>
+
+</div>
+
+<footer>
+  <b>金石 FinPM</b> · 一期实现说明 v1 · 2026-06 ｜ 编排层 = IP，harness = 租来的 ｜ 配套立项书 v4
+</footer>
+
+</body>
+</html>
